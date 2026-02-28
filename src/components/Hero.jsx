@@ -1,5 +1,6 @@
 import React from 'react'
 import bgHero from "../assets/bgHero.jpg"
+import { Link } from 'react-router-dom'
 
 export default function Hero() {
     return (
@@ -11,9 +12,11 @@ export default function Hero() {
                     <br /> in seconds, show your QR code, and enter the park—no cash, no <br /> stress, no delays.
                 </p>
                 <div className='flex items-center gap-6 mb-6'>
-                    <button className='bg-[#F4B400] px-6 py-2 rounded-lg text-black font-semibold'>
-                        Get Started
-                    </button>
+                    <Link to='/select-role'>
+                        <button className='bg-[#F4B400] px-6 py-2 rounded-lg text-black font-semibold'>
+                            Get Started
+                        </button>
+                    </Link>
                     <button className='bg-transparent border-2 border-[#2563EB] px-6 py-2 rounded-lg text-white font-semibold'>
                         Learn More
                     </button>
