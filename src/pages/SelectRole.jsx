@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import kowopeLogo from "../assets/kowopeLogo.jpg";
+import AuthLayout from '../layout/AuthLayout';
 import kowopeBus from "../assets/kowopeBus.jpg";
 import kowopeAgent from "../assets/kowopeAgent.png";
 import kowopeManagement from "../assets/kowopeManagement.jpg";
@@ -32,20 +32,8 @@ export default function SelectRole() {
     };
 
     return (
-        <main className="min-h-screen bg-white flex flex-col">
-            {/* Logo */}
-            <header className="px-8">
-                <Link to="/">
-                    <img
-                        src={kowopeLogo}
-                        alt="Kowope Logo"
-                        className="w-[130px] object-contain"
-                    />
-                </Link>
-            </header>
-
-            {/* Content */}
-            <div className="flex flex-col items-center justify-center flex-1 px-4 py-2">
+        <AuthLayout>
+            <div className="flex flex-col items-center w-full">
                 {/* Heading */}
                 <div className="text-center mb-10">
                     <h1 className="text-2xl font-bold text-gray-900">
@@ -95,6 +83,6 @@ export default function SelectRole() {
                     Next
                 </button>
             </div>
-        </main>
+        </AuthLayout>
     );
 }

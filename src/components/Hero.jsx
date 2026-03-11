@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 export default function Hero() {
     return (
         <main className='w-full h-[600px] bg-cover bg-center bg-no-repeat' style={{ backgroundImage: `url(${bgHero})` }}>
-            <div className='w-full h-full bg-black opacity-80 px-12 pt-20'>
+            <div className='w-full h-full bg-black px-6 md:px-16 opacity-80 px-12 pt-20'>
                 <p className='text-xl font-bold text-[#F4B400] mb-6'>No More Cash, No More Wahala!</p>
                 <h1 className='text-white text-5xl font-bold mb-6'>Digital Ticketing  for <br /> Motor Parks.</h1>
                 <p className='text-gray-500 mb-6'>Kowope is revolutionizing Lagos transport hubs. Buy your daily ticket
