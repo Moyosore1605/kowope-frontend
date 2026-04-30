@@ -33,6 +33,7 @@ const steps = [
 export default function HowItWorks() {
     return (
         <section
+            id="how-it-works"
             className="py-20 px-6 md:px-16 relative overflow-hidden"
             style={{ backgroundColor: '#0D1B2A' }}
         >
@@ -48,7 +49,7 @@ export default function HowItWorks() {
             <div className="max-w-6xl mx-auto relative z-10">
                 {/* Header */}
                 <div className="text-center mb-16">
-                    <p className="text-[#F4B400] font-semibold text-xs uppercase tracking-widest mb-4">
+                    <p className="text-primary font-semibold text-xs uppercase tracking-widest mb-4">
                         How It Works
                     </p>
                     <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
@@ -77,13 +78,13 @@ export default function HowItWorks() {
                             >
                                 {/* Number + active dot */}
                                 <div className="flex items-center gap-3">
-                                    <span className="text-4xl font-bold text-[#F4B400] leading-none">
+                                    <span className="text-4xl font-bold text-primary leading-none">
                                         {step.number}
                                     </span>
                                 </div>
 
                                 {/* Role label */}
-                                <p className="text-[#F4B400] text-xs font-semibold uppercase tracking-wider -mt-2">
+                                <p className="text-primary text-xs font-semibold uppercase tracking-wider -mt-2">
                                     {step.role}
                                 </p>
 
@@ -101,7 +102,7 @@ export default function HowItWorks() {
                                 <ul className="space-y-2 mt-1">
                                     {step.bullets.map((b, i) => (
                                         <li key={i} className="flex items-center gap-2 text-gray-300 text-sm">
-                                            <span className="w-2 h-2 rounded-full bg-[#F4B400] flex-shrink-0" />
+                                            <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
                                             {b}
                                         </li>
                                     ))}

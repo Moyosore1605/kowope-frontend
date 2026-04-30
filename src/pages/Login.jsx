@@ -36,18 +36,18 @@ export default function Login() {
             <div className="flex flex-col items-center w-full">
                 {/* Heading */}
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-2xl font-bold text-header">
                         A Swift Digital ticketing for drivers
                     </h1>
-                    <p className="text-gray-500 text-sm mt-1">
+                    <p className="text-body text-sm mt-1">
                         Login to purchase your daily ticket
                     </p>
                 </div>
 
                 {/* Card */}
                 <div className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-8">
-                    <h2 className="text-xl font-bold text-gray-900 mb-1">Welcome Back</h2>
-                    <p className="text-gray-500 text-sm mb-6">Login to your driver account</p>
+                    <h2 className="text-xl font-bold text-header mb-1">Welcome Back</h2>
+                    <p className="text-body text-sm mb-6">Login to your driver account</p>
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         {/* Phone Number */}
@@ -61,7 +61,7 @@ export default function Login() {
                                     placeholder="08012345678"
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
-                                    className="bg-transparent flex-1 outline-none text-gray-600 text-sm placeholder-gray-400"
+                                    className="bg-transparent flex-1 outline-none text-gray-600 text-sm placeholder:text-[#98A2B3]"
                                 />
                                 <button
                                     type="button"
@@ -85,7 +85,7 @@ export default function Login() {
                             <label className="block text-sm font-semibold text-gray-800 mb-1">
                                 PIN
                             </label>
-                            <p className="text-xs text-gray-400 mb-3">Enter your 4-digit PIN</p>
+                            <p className="text-xs text-body mb-3">Enter your 4-digit PIN</p>
                             <div className="flex gap-3">
                                 {pin.map((digit, i) => (
                                     <input
@@ -99,19 +99,19 @@ export default function Login() {
                                         onKeyDown={(e) => handlePinKeyDown(i, e)}
                                         className={`w-12 h-12 text-center text-lg font-semibold rounded-xl border-2 outline-none transition-all bg-white
                                             ${i === 0 && !digit
-                                                ? "border-yellow-400"
+                                                ? "border-primary"
                                                 : digit
-                                                    ? "border-yellow-400"
+                                                    ? "border-primary"
                                                     : "border-gray-200"
                                             }
-                                            focus:border-yellow-400`}
+                                            focus:border-primary`}
                                     />
                                 ))}
                             </div>
                             <div className="text-right mt-2">
                                 <Link
                                     to="/forgot-pin"
-                                    className="text-yellow-500 text-sm font-medium hover:text-yellow-600 transition-colors"
+                                    className="text-primary text-sm font-medium hover:text-primary-hover transition-colors"
                                 >
                                     Forgot PIN?
                                 </Link>
@@ -121,13 +121,13 @@ export default function Login() {
                         {/* Login Button */}
                         <button
                             type="submit"
-                            className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3.5 rounded-xl transition-colors text-base"
+                            className="w-full bg-primary hover:bg-primary-hover text-gray-900 font-bold py-3.5 rounded-xl transition-colors text-base"
                         >
                             Login
                         </button>
 
                         {/* Register Link */}
-                        <p className="text-center text-sm text-gray-500">
+                        <p className="text-center text-sm text-body">
                             New to Kowope?{" "}
                             <Link
                                 to="/signup"

@@ -1,7 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+html {
+  scroll-behavior: smooth;
+}
 
 body {
     font-family: 'Poppins', sans-serif;
+    /* overflow: hidden; */
 }

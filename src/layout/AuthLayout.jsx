@@ -15,7 +15,7 @@ export default function AuthLayout({ children }) {
                     <img
                         src={kowopeLogo}
                         alt="Kowope Logo"
-                        className="w-[120px] h-[85px] object-contain"
+                        className="w-30 h-21.25 object-contain"
                     />
                 </Link>
             </header>

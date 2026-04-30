@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import AuthLayout from '../layout/AuthLayout';
 
@@ -67,24 +67,24 @@ export default function Signup() {
             <div className="flex flex-col items-center w-full">
                 {/* Heading */}
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-2xl font-bold text-header">
                         A Swift Digital ticketing for drivers
                     </h1>
-                    <p className="text-gray-500 text-sm mt-1">
+                    <p className="text-body text-sm mt-1">
                         Don't have an account, create one to purchase ticket seamlessly
                     </p>
                 </div>
 
                 {/* Card */}
                 <div className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-8">
-                    <h2 className="text-xl font-bold text-gray-900 mb-1">Create Your Account</h2>
-                    <p className="text-gray-500 text-sm mb-6">Register as a driver to start buying digital tickets</p>
+                    <h2 className="text-xl font-bold text-header mb-1">Create Your Account</h2>
+                    <p className="text-body text-sm mb-6">Register as a driver to start buying digital tickets</p>
 
                     <form onSubmit={handleSubmit} className="space-y-5">
 
                         {/* Full Name */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1">Full Name</label>
+                            <label className="block text-sm font-semibold text-header mb-1">Full Name</label>
                             <div className="flex items-center bg-gray-100 rounded-lg px-3 py-3 gap-2">
                                 <input
                                     type="text"
@@ -101,7 +101,7 @@ export default function Signup() {
 
                         {/* Phone Number */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1">Phone Number</label>
+                            <label className="block text-sm font-semibold text-header mb-1">Phone Number</label>
                             <div className="flex items-center bg-gray-100 rounded-lg px-3 py-3 gap-2">
                                 <input
                                     type="tel"
@@ -118,7 +118,7 @@ export default function Signup() {
 
                         {/* ID Type */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-2">ID Type</label>
+                            <label className="block text-sm font-semibold text-header mb-2">ID Type</label>
                             <div className="flex gap-5">
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
@@ -127,7 +127,7 @@ export default function Signup() {
                                         value="drivers-license"
                                         checked={idType === "drivers-license"}
                                         onChange={() => setIdType("drivers-license")}
-                                        className="accent-yellow-400 w-4 h-4"
+                                        className="accent-primary w-4 h-4"
                                     />
                                     <span className="text-sm text-gray-700">Driver's License</span>
                                 </label>
@@ -138,7 +138,7 @@ export default function Signup() {
                                         value="nin"
                                         checked={idType === "nin"}
                                         onChange={() => setIdType("nin")}
-                                        className="accent-yellow-400 w-4 h-4"
+                                        className="accent-primary w-4 h-4"
                                     />
                                     <span className="text-sm text-gray-700">NIN</span>
                                 </label>
@@ -147,7 +147,7 @@ export default function Signup() {
 
                         {/* License Upload */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1">
+                            <label className="block text-sm font-semibold text-header mb-1">
                                 {idType === "drivers-license" ? "Driver's License" : "NIN Slip"}
                             </label>
                             <div
@@ -158,7 +158,7 @@ export default function Signup() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                 </svg>
                                 <span className="text-sm text-gray-500 font-medium">
-                                    {licenseFile ? licenseFile.name : "Upload License"}
+                                    {idType === "drivers-license" ? "Upload Driver's License" : "Upload NIN Slip"}
                                 </span>
                                 <input
                                     ref={fileInputRef}
@@ -173,7 +173,7 @@ export default function Signup() {
 
                         {/* Vehicle Registration Number */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1">Vehicle Registration Number</label>
+                            <label className="block text-sm font-semibold text-header mb-1">Vehicle Registration Number</label>
                             <div className="bg-gray-100 rounded-lg px-3 py-3">
                                 <input
                                     type="text"
@@ -187,7 +187,7 @@ export default function Signup() {
 
                         {/* LGA */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1">Local Government Area (LGA)</label>
+                            <label className="block text-sm font-semibold text-header mb-1">Local Government Area (LGA)</label>
                             <div className="relative">
                                 <select
                                     value={lga}
@@ -209,7 +209,7 @@ export default function Signup() {
 
                         {/* Area */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1">Area</label>
+                            <label className="block text-sm font-semibold text-header mb-1">Area</label>
                             <div className="relative">
                                 <select
                                     value={area}
@@ -232,7 +232,7 @@ export default function Signup() {
 
                         {/* Create PIN */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1">Create PIN</label>
+                            <label className="block text-sm font-semibold text-header mb-1">Create PIN</label>
                             <div className="flex items-center bg-gray-100 rounded-lg px-3 py-3 gap-2">
                                 <input
                                     type={showPin ? "text" : "password"}
@@ -256,7 +256,7 @@ export default function Signup() {
 
                         {/* Confirm PIN */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1">Confirm PIN</label>
+                            <label className="block text-sm font-semibold text-header mb-1">Confirm PIN</label>
                             <div className="flex items-center bg-gray-100 rounded-lg px-3 py-3 gap-2">
                                 <input
                                     type={showConfirmPin ? "text" : "password"}
@@ -280,13 +280,13 @@ export default function Signup() {
                         {/* Submit */}
                         <button
                             type="submit"
-                            className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3.5 rounded-xl transition-colors text-base"
+                            className="w-full bg-primary hover:bg-primary-hover text-gray-900 font-bold py-3.5 rounded-xl transition-colors text-base"
                         >
                             Register
                         </button>
 
                         {/* Login Link */}
-                        <p className="text-center text-sm text-gray-500">
+                        <p className="text-center text-sm text-body">
                             Already have an account?{" "}
                             <Link to="/login" className="text-blue-500 font-medium hover:underline">
                                 Login here

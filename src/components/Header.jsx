@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import kowopeLogo from "../assets/kowopeLogo.jpg";
+import kowopeLogo from "../assets/kowopeLogo-removebg-preview.png";
 
 const navLinks = [
-    { label: 'How it Works', to: '/login' },
-    { label: 'Benefits', to: '/select-role' },
-    { label: 'Contact', to: '/select-role' },
+    { label: 'How it Works', to: '#how-it-works' },
+    { label: 'Benefits', to: '#benefits' },
+    { label: 'Contact', to: '#contact' },
 ];
 
 export default function Header() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const location = useLocation();
+    const [scrolled, setScrolled] = useState(false);
 
     const closeMobile = () => setMobileOpen(false);
 
     // Close mobile menu on route change
-    React.useEffect(() => {
+    useEffect(() => {
         closeMobile();
     }, [location.pathname]);
+    
+    useEffect(() => {
+        const handleScroll = () => {
+        setScrolled(window.scrollY > 50);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     return (
-        <header className="relative px-6 md:px-8 shadow-sm bg-white">
+        <header className={`sticky top-0 z-50 p-4 shadow-sm ${scrolled ? "backdrop-blur-lg bg-white shadow-sm opacity-98" : "bg-white"}`}>
             {/* ── Top bar ── */}
             <div className="flex justify-between items-center">
                 {/* Logo */}
@@ -28,20 +38,19 @@ export default function Header() {
                     <img
                         src={kowopeLogo}
                         alt="Kowope Logo"
-                        className="w-[110px] h-[85px] object-contain"
+                        className="w-24 h-12 object-contain"
                     />
                 </Link>
 
                 {/* Desktop nav links */}
                 <nav className="hidden md:flex gap-8 items-center">
                     {navLinks.map((link) => (
-                        <Link
-                            key={link.label}
-                            to={link.to}
+                        <a
+                            href={link.to}
                             className="text-black font-semibold text-sm hover:text-[#3B5BDB] transition-colors duration-150"
                         >
                             {link.label}
-                        </Link>
+                        </a>
                     ))}
                 </nav>
 
@@ -50,8 +59,8 @@ export default function Header() {
                     <Link to="/login" className="text-black font-semibold text-sm hover:text-[#3B5BDB] transition-colors duration-150">
                         Login
                     </Link>
-                    <Link to="/select-role">
-                        <button className="bg-[#F4B400] px-6 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors duration-150">
+                    <Link to="/signup">
+                        <button className="bg-primary px-6 py-2 rounded-lg font-semibold text-sm hover:bg-primary-hover transition-colors duration-150">
                             Signup
                         </button>
                     </Link>
@@ -79,19 +88,18 @@ export default function Header() {
 
             {/* ── Mobile dropdown menu ── */}
             <div
-                className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileOpen ? 'max-h-96 opacity-100 pb-5' : 'max-h-0 opacity-0'
+                className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileOpen ? 'max-h-96 opacity-100 py-5' : 'max-h-0 opacity-0'
                     }`}
             >
                 <nav className="flex flex-col gap-1 pt-2 border-t border-gray-100">
                     {navLinks.map((link) => (
-                        <Link
-                            key={link.label}
-                            to={link.to}
+                        <a
                             onClick={closeMobile}
                             className="text-gray-800 font-semibold text-sm px-3 py-3 rounded-lg hover:bg-[#EEF4FF] hover:text-[#3B5BDB] transition-colors duration-150"
+                            href={link.to}
                         >
                             {link.label}
-                        </Link>
+                        </a>
                     ))}
 
                     {/* Divider */}
@@ -105,8 +113,8 @@ export default function Header() {
                     >
                         Login
                     </Link>
-                    <Link to="/select-role" onClick={closeMobile}>
-                        <button className="w-full bg-[#F4B400] px-6 py-2.5 rounded-lg font-semibold text-sm mt-1 hover:bg-yellow-400 transition-colors duration-150">
+                    <Link to="/signup" onClick={closeMobile}>
+                        <button className="w-full bg-primary px-6 py-2.5 rounded-lg font-semibold text-sm mt-1 hover:bg-primary-hover transition-colors duration-150">
                             Signup
                         </button>
                     </Link>

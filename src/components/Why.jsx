@@ -71,7 +71,7 @@ const benefits = [
 
 export default function Why() {
     return (
-        <section className="py-20 px-6 md:px-16" style={{ backgroundColor: '#EEF4FF' }}>
+        <section className="py-20 px-6 md:px-16" style={{ backgroundColor: '#EEF4FF' }} id="benefits">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-14">
