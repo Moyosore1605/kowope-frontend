@@ -8,7 +8,7 @@ export default function NavItem({ Icon, label, to, setActiveNav, setSidebarOpen,
         <Link
             key={label}
             onClick={() => { setActiveNav(label); setSidebarOpen(false); }}
-            className={`flex items-center w-full px-4 py-2.5 rounded-xl text-sm font-medium bg-[#F2F4F7] transition-all gap-3
+            className={`flex items-center w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all gap-3
             ${activeNav === label
                 ? 'bg-primary text-gray-900'
                 : dk
