@@ -51,7 +51,7 @@ export default function SideBar({ sidebarOpen, setSidebarOpen, activeNav, sideba
             {/* Dark mode toggle */}
                 <button
                     onClick={() => setDarkMode(d => !d)}
-                    className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all
+                    className={`flex items-center justify-between w-full px-4 py-2.5 bg-[#F2F4F7] rounded-xl text-sm font-medium transition-all
                     ${dk
                         ? 'text-gray-400 hover:bg-gray-800 hover:text-gray-100'
                         : 'text-[#0F1729] hover:bg-gray-100 hover:text-gray-800'
