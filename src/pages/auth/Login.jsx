@@ -1,10 +1,19 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { AlertCircle } from "lucide-react";
+import toast from "react-hot-toast";
 import AuthLayout from '../../layout/AuthLayout';
+import { loginDriver } from "../../services/auth";
 
 export default function Login() {
+    const navigate = useNavigate();
+
+    const [globalError, setGlobalError] = useState('');
+    const [errors, setErrors] = useState({});
     const [phone, setPhone] = useState("");
     const [pin, setPin] = useState(["", "", "", ""]);
+    
     const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
     const handlePinChange = (index, value) => {
@@ -26,9 +35,67 @@ export default function Login() {
         }
     };
 
+    const mutation = useMutation({
+        mutationFn: (payload) => loginDriver(payload),
+        onSuccess: (data) => {
+            // Uncomment and use your auth context login method if available
+            // login(data.access_token);
+
+            toast.success("Welcome back! 👋");
+
+            // Assuming the driver object has a role, adjust routing as needed
+            const role = data?.user?.role;
+
+            if (role === "donor") {
+                navigate("/donor-dashboard");
+            } else if (role === "hospital") {
+                navigate("/hospital-dashboard");
+            } else {
+                // Defaulting to driver dashboard since this is a driver login
+                navigate("/driver-dashboard"); 
+            }
+        },
+        onError: (error) => {
+            const responseData = error?.response?.data;
+            
+            // Handle backend field-specific errors or global message
+            if (responseData?.errors) {
+                setErrors(responseData.errors);
+            } else {
+                const message = responseData?.message || "Invalid credentials. Please try again.";
+                setGlobalError(message);
+                toast.error(message);
+            }
+        },
+    });
+
+    const validateForm = () => {
+        const newErrors = {};
+        
+        if (!phone.trim()) {
+            newErrors.phone = "Phone number is required";
+        }
+        
+        const joinedPin = pin.join("");
+        if (joinedPin.length < 4) {
+            newErrors.pin = "Please enter a complete 4-digit PIN";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Login submitted", { phone, pin: pin.join("") });
+        setGlobalError('');
+        setErrors({});
+
+        if (validateForm()) {
+            mutation.mutate({
+                phone_number: phone,
+                pin: pin.join("")
+            });
+        }
     };
 
     return (
@@ -37,7 +104,7 @@ export default function Login() {
                 {/* Heading */}
                 <div className="text-center mb-8">
                     <h1 className="text-2xl font-bold text-header">
-                        A Swift Digital ticketing for drivers
+                        Swift Digital Ticketing for Drivers
                     </h1>
                     <p className="text-body text-sm mt-1">
                         Login to purchase your daily ticket
@@ -49,13 +116,24 @@ export default function Login() {
                     <h2 className="text-xl font-bold text-header mb-1">Welcome Back</h2>
                     <p className="text-body text-sm mb-6">Login to your driver account</p>
 
+                    {/* Global Error Banner */}
+                    {globalError && (
+                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                                <h3 className="text-sm font-semibold text-red-800">Login Failed</h3>
+                                <p className="text-sm text-red-600 mt-1">{globalError}</p>
+                            </div>
+                        </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="space-y-5">
                         {/* Phone Number */}
                         <div>
                             <label className="block text-sm font-semibold text-gray-800 mb-1">
                                 Phone Number
                             </label>
-                            <div className="flex items-center bg-gray-100 rounded-lg px-3 py-3 gap-2">
+                            <div className={`flex items-center bg-gray-100 rounded-lg px-3 py-3 gap-2 ${errors.phone ? 'border border-red-500' : ''}`}>
                                 <input
                                     type="tel"
                                     placeholder="08012345678"
@@ -63,21 +141,8 @@ export default function Login() {
                                     onChange={(e) => setPhone(e.target.value)}
                                     className="bg-transparent flex-1 outline-none text-gray-600 text-sm placeholder:text-[#98A2B3]"
                                 />
-                                <button
-                                    type="button"
-                                    className="bg-gray-200 rounded-md p-1 flex items-center justify-center"
-                                    title="More options"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-4 w-4 text-gray-500"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                    >
-                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                    </svg>
-                                </button>
                             </div>
+                            {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
                         </div>
 
                         {/* PIN */}
@@ -85,7 +150,7 @@ export default function Login() {
                             <label className="block text-sm font-semibold text-gray-800 mb-1">
                                 PIN
                             </label>
-                            <p className="text-xs text-body mb-3">Enter your 4-digit PIN</p>
+                            <p className="text-xs tracking-wide text-body mb-3">Enter your 4-digit PIN</p>
                             <div className="flex gap-3">
                                 {pin.map((digit, i) => (
                                     <input
@@ -98,16 +163,19 @@ export default function Login() {
                                         onChange={(e) => handlePinChange(i, e.target.value)}
                                         onKeyDown={(e) => handlePinKeyDown(i, e)}
                                         className={`w-12 h-12 text-center text-lg font-semibold rounded-xl border-2 outline-none transition-all bg-white
-                                            ${i === 0 && !digit
-                                                ? "border-primary"
-                                                : digit
+                                            ${errors.pin 
+                                                ? "border-red-400 focus:border-red-500" 
+                                                : i === 0 && !digit
                                                     ? "border-primary"
-                                                    : "border-gray-200"
-                                            }
-                                            focus:border-primary`}
+                                                    : digit
+                                                        ? "border-primary"
+                                                        : "border-gray-200"
+                                            } focus:border-primary`}
                                     />
                                 ))}
                             </div>
+                            {errors.pin && <p className="text-xs text-red-500 mt-1">{errors.pin}</p>}
+                            
                             <div className="text-right mt-2">
                                 <Link
                                     to="/forgot-pin"
@@ -121,9 +189,10 @@ export default function Login() {
                         {/* Login Button */}
                         <button
                             type="submit"
-                            className="w-full bg-primary hover:bg-primary-hover text-gray-900 font-bold py-3.5 rounded-xl transition-colors text-base"
+                            disabled={mutation.isPending}
+                            className="w-full bg-primary hover:bg-primary-hover text-gray-900 font-bold py-3.5 rounded-xl transition-colors text-base disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Login
+                            {mutation.isPending ? "Logging in..." : "Login"}
                         </button>
 
                         {/* Register Link */}

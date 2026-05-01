@@ -207,8 +207,8 @@ export default function Signup() {
                         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
                             <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
                             <div className="flex-1">
-                            <h3 className="text-sm font-semibold text-red-800">Registration Failed</h3>
-                            <p className="text-sm text-red-600 mt-1">{globalError}</p>
+                                <h3 className="text-sm font-semibold text-red-800">Registration Failed</h3>
+                                <p className="text-sm text-red-600 mt-1">{globalError}</p>
                             </div>
                         </div>
                     )}
