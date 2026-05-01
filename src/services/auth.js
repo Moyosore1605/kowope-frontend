@@ -6,7 +6,7 @@ export const registerDriver = async (payload) => {
 		{
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Type": "application/json",
             },
             body: payload,
             // credentials: "include"
@@ -15,7 +15,7 @@ export const registerDriver = async (payload) => {
 
     const contentType = res.headers.get("content-type");
 
-    if (!contentType?.includes("application/x-www-form-urlencoded")) {
+    if (!contentType?.includes("application/json")) {
         throw new Error("Invalid server response");
     }
 
