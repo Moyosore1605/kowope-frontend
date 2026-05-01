@@ -7,5 +7,6 @@ html {
 
 body {
     font-family: 'Poppins', sans-serif;
+    font-variant-numeric: tabular-nums;
     /* overflow: hidden; */
 }

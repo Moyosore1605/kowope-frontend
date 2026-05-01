@@ -48,8 +48,8 @@ function DetailRow({ label, value, darkMode }) {
 			className="flex justify-between items-center py-2"
 			style={{ borderBottom: darkMode ? '1px solid #1f2937' : '1px solid #f1f5f9' }}
 		>
-		<span className={`text-[11px] ${darkMode ? 'text-gray-400' : 'text-body'}`}>{label}</span>
-		<span className={`text-xs font-semibold ${darkMode ? 'text-white' : 'text-[#010214]'}`}>{value}</span>
+		<span className={`text-[11px] tracking-wide ${darkMode ? 'text-gray-400' : 'text-body'}`}>{label}</span>
+		<span className={`text-xs font-semibold tracking-wide ${darkMode ? 'text-white' : 'text-[#010214]'}`}>{value}</span>
 		</div>
 	);
 }
@@ -117,7 +117,7 @@ function DriverDashboard() {
 									</div>
 									<span className="text-[#00AE4E] text-sm font-semibold">Ticket Active</span>
 								</div>
-								<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-body'}`}>Expires today</p>
+								<p className={`text-xs tracking-wide ${darkMode ? 'text-gray-500' : 'text-body'}`}>Expires today</p>
 							</div>
 							<Link
 								to="/driver-dashboard/ticket"
@@ -151,7 +151,7 @@ function DriverDashboard() {
 					<div className={`p-6 rounded-2xl border shadow-sm flex flex-col hover:shadow-md transition-colors ${card}`}>
 						<div className="flex items-center justify-between mb-5">
 							<h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-header'}`}>Recent Payments</h2>
-							{hasTicket && <Link className="text-xs text-primary font-medium hover:underline" to="/driver-dashboard/ticket-history" >View all →</Link>}
+							{hasTicket && <Link className="text-xs tracking-wide text-primary font-medium hover:underline" to="/driver-dashboard/ticket-history" >View all →</Link>}
 						</div>
 
 						{hasTicket ? (
@@ -159,9 +159,9 @@ function DriverDashboard() {
 							<table className="w-full text-sm">
 							<thead>
 								<tr className={darkMode ? 'text-gray-500' : 'text-body'}>
-									<th className="text-xs font-medium text-left pb-3 pr-4">Date</th>
-									<th className="text-xs font-medium text-left pb-3 pr-4">Price</th>
-									<th className="text-xs font-medium text-left pb-3">Status</th>
+									<th className="text-xs tracking-wide font-medium text-left pb-3 pr-4">Date</th>
+									<th className="text-xs tracking-wide font-medium text-left pb-3 pr-4">Price</th>
+									<th className="text-xs tracking-wide font-medium text-left pb-3">Status</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -171,10 +171,10 @@ function DriverDashboard() {
 									className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
 									style={{ borderTop: darkMode ? '1px solid #1f2937' : '1px solid #f1f5f9' }}
 								>
-									<td className={`py-2.5 pr-4 text-xs ${darkMode ? 'text-gray-300' : 'text-header'}`}>{p.date}</td>
+									<td className={`py-2.5 pr-4 text-xs tracking-wide ${darkMode ? 'text-gray-300' : 'text-header'}`}>{p.date}</td>
 									<td className={`py-2.5 pr-4 text-sm font-semibold ${darkMode ? 'text-gray-200' : 'text-header'}`}>{p.price}</td>
 									<td className="py-2.5">
-									<span className={`text-xs font-semibold px-2 py-0.5 rounded-md
+									<span className={`text-xs tracking-wide font-semibold px-2 py-0.5 rounded-md
 										${p.status === 'Active'
 										? 'bg-[#E5FFF1] text-[#00AE4E]'
 										: darkMode
@@ -194,7 +194,7 @@ function DriverDashboard() {
 								<ReceiptText size={20} className={darkMode ? 'text-gray-600' : 'text-gray-300'} />
 							</div>
 							<p className={`text-sm font-medium ${darkMode ? 'text-gray-500' : 'text-body'}`}>No recent payments</p>
-							<p className={`text-xs ${darkMode ? 'text-gray-600' : 'text-gray-300'}`}>Payments will appear here after purchase</p>
+							<p className={`text-xs tracking-wide ${darkMode ? 'text-gray-600' : 'text-gray-300'}`}>Payments will appear here after purchase</p>
 						</div>
 						)}
 					</div>
@@ -205,7 +205,7 @@ function DriverDashboard() {
 					<div className="flex items-center justify-between mb-5">
 						<h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-header'}`}>QR Code</h2>
 						{!hasTicket && (
-						<span className={`text-xs px-2.5 py-1 rounded-full font-medium ${darkMode ? 'bg-gray-800 text-body' : 'bg-gray-100 text-body'}`}>
+						<span className={`text-xs tracking-wide px-2.5 py-1 rounded-full font-medium ${darkMode ? 'bg-gray-800 text-body' : 'bg-gray-100 text-body'}`}>
 							Locked
 						</span>
 						)}
@@ -223,7 +223,8 @@ function DriverDashboard() {
 									/>
 								</div>
 							</div>
-							<p className={`text-xs text-center ${darkMode ? 'text-gray-400' : 'text-body'}`}>
+							<hr className="my-3 border-gray-200 dark:border-gray-700" />
+							<p className={`text-xs tracking-wide text-center ${darkMode ? 'text-gray-400' : 'text-body'}`}>
 								Show this QR code to the agent at the park entrance
 							</p>
 
