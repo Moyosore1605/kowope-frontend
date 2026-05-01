@@ -102,21 +102,13 @@ function DriverDashboard() {
   	return (
         <div className="flex-1 p-6 transition-colors duration-200">
 
-			<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-				<div>
-					<h1 className={`text-2xl md:text-3xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-header'}`}>
-						Welcome back, Micheal.
-					</h1>
-					<p className={`text-sm font-medium ${hasTicket ? 'text-[#00AE4E] font-medium' : darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-						{hasTicket ? "You're cleared to operate today." : "You don't have an active ticket for today."}
-					</p>
-				</div>
-				<Link
-					className="bg-primary hover:bg-primary-hover active:bg-primary-active text-gray-900 font-semibold py-2.5 px-8 rounded-xl transition-all shadow-sm text-sm whitespace-nowrap flex justify-center items-center"
-					to={hasTicket ? "/driver-dashboard/ticket" : "/driver-dashboard/buy-ticket"}
-				>
-					{hasTicket ? "View Ticket" : "Buy Ticket"}
-				</Link>
+			<div className="mb-8">
+				<h1 className={`text-2xl md:text-3xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-header'}`}>
+					Welcome back, Micheal.
+				</h1>
+				<p className={`text-sm font-medium ${hasTicket ? 'text-[#00AE4E]' : darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+					{hasTicket ? "You're cleared to operate today." : "You don't have an active ticket for today."}
+				</p>
 			</div>
 
 			{/* Grid */}
@@ -124,34 +116,55 @@ function DriverDashboard() {
 
 				<div className="lg:col-span-2 flex flex-col gap-5">
 
-				{/* Status card */}
-					<div className={`p-6 rounded-2xl border shadow-sm transition-colors ${
+					{/* Status card */}
+					<div className={`p-6 rounded-2xl border shadow-sm transition-colors opacity-95 ${
 					hasTicket
 						? darkMode
 						? "bg-green-900/20 border-green-800"
 						: "bg-[#F0FFF7] border-[#D1FAE5]"
 						: card
 					}`}>
-						<h2 className={`text-lg font-semibold mb-4 ${darkMode ? 'text-white' : 'text-header'}`}>Today's Status</h2>
-						{hasTicket ? (
-						<>
+					<h2 className={`text-lg font-semibold mb-4 ${darkMode ? 'text-white' : 'text-header'}`}>
+						Today's Status
+					</h2>
+
+					{hasTicket ? (
+						<div className="flex items-center justify-between">
+						<div>
 							<div className="flex items-center gap-2 font-medium mb-2">
-								<div className="w-5 h-5 rounded-full bg-[#00AE4E] flex items-center justify-center shrink-0">
-									<Check size={11} className="text-white" strokeWidth={3} />
-								</div>
-								<span className="text-[#00AE4E] text-sm font-semibold">Ticket Active</span>
+							<div className="w-5 h-5 rounded-full bg-[#00AE4E] flex items-center justify-center shrink-0">
+								<Check size={11} className="text-white" strokeWidth={3} />
+							</div>
+							<span className="text-[#00AE4E] text-sm font-semibold">Ticket Active</span>
 							</div>
 							<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-body'}`}>Expires today</p>
-						</>
-						) : (
-						<>
+						</div>
+						<Link
+							to="/driver-dashboard/ticket"
+							className="bg-primary hover:bg-primary-hover text-gray-900 font-semibold py-2 px-5 rounded-xl text-sm transition-all shadow-sm whitespace-nowrap"
+						>
+							View Ticket
+						</Link>
+						</div>
+					) : (
+						<div className="flex items-center justify-between">
+						<div>
 							<div className="flex items-center gap-2 text-red-500 font-medium mb-2">
-								<TriangleAlert size={17} className="shrink-0" />
-								<span className="text-sm">Inactive — Ticket not paid</span>
+							<TriangleAlert size={17} className="shrink-0" />
+							<span className="text-sm">Inactive — Ticket not paid</span>
 							</div>
-							<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-body'}`}>Pay your daily ticket to operate today.</p>
-						</>
-						)}
+							<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-body'}`}>
+							Pay your daily ticket to operate today.
+							</p>
+						</div>
+						<Link
+							to="/driver-dashboard/buy-ticket"
+							className="bg-primary hover:bg-primary-hover text-gray-900 font-semibold py-2 px-5 rounded-xl text-sm transition-all shadow-sm whitespace-nowrap"
+						>
+							Buy Ticket
+						</Link>
+						</div>
+					)}
 					</div>
 
 					{/* Recent Payments */}
