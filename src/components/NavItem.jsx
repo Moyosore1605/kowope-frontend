@@ -13,7 +13,7 @@ export default function NavItem({ Icon, label, to, setActiveNav, setSidebarOpen,
                 ? 'bg-primary text-gray-900'
                 : dk
                 ? 'text-gray-400 hover:bg-gray-800 hover:text-gray-100'
-                : 'text-[#0F1729] hover:bg-gray-100 hover:text-gray-800'
+                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
             }`}
             to={to}
         >

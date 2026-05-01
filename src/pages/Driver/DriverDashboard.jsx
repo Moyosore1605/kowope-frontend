@@ -66,11 +66,11 @@ function QRCode({ darkMode }) {
 function DetailRow({ label, value, darkMode }) {
 	return (
 		<div
-		className="flex justify-between items-center py-2"
-		style={{ borderBottom: darkMode ? '1px solid #1f2937' : '1px solid #f1f5f9' }}
+			className="flex justify-between items-center py-2"
+			style={{ borderBottom: darkMode ? '1px solid #1f2937' : '1px solid #f1f5f9' }}
 		>
-		<span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-body'}`}>{label}</span>
-		<span className={`text-xs font-bold ${darkMode ? 'text-white' : 'text-[#010214]'}`}>{value}</span>
+		<span className={`text-[11px] ${darkMode ? 'text-gray-400' : 'text-body'}`}>{label}</span>
+		<span className={`text-xs font-semibold ${darkMode ? 'text-white' : 'text-[#010214]'}`}>{value}</span>
 		</div>
 	);
 }
@@ -104,10 +104,10 @@ function DriverDashboard() {
 
 			<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
 				<div>
-					<h1 className={`text-2xl md:text-3xl font-bold mb-1 ${darkMode ? 'text-white' : 'text-header'}`}>
+					<h1 className={`text-2xl md:text-3xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-header'}`}>
 						Welcome back, Micheal.
 					</h1>
-					<p className={`text-sm ${hasTicket ? 'text-[#00AE4E] font-medium' : darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+					<p className={`text-sm font-medium ${hasTicket ? 'text-[#00AE4E] font-medium' : darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
 						{hasTicket ? "You're cleared to operate today." : "You don't have an active ticket for today."}
 					</p>
 				</div>
@@ -132,7 +132,7 @@ function DriverDashboard() {
 						: "bg-[#F0FFF7] border-[#D1FAE5]"
 						: card
 					}`}>
-						<h2 className={`text-base font-semibold mb-4 ${darkMode ? 'text-white' : 'text-header'}`}>Today's Status</h2>
+						<h2 className={`text-lg font-semibold mb-4 ${darkMode ? 'text-white' : 'text-header'}`}>Today's Status</h2>
 						{hasTicket ? (
 						<>
 							<div className="flex items-center gap-2 font-medium mb-2">
@@ -155,10 +155,10 @@ function DriverDashboard() {
 					</div>
 
 					{/* Recent Payments */}
-					<div className={`p-6 rounded-2xl border shadow-sm flex flex-col transition-colors ${card}`}>
+					<div className={`p-6 rounded-2xl border shadow-sm flex flex-col hover:shadow-md transition-colors ${card}`}>
 						<div className="flex items-center justify-between mb-5">
-							<h2 className={`text-base font-semibold ${darkMode ? 'text-white' : 'text-header'}`}>Recent Payments</h2>
-							{hasTicket && <Link className="text-xs text-primary font-medium hover:underline" to="/driver-dashboard/ticket-history" >View all</Link>}
+							<h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-header'}`}>Recent Payments</h2>
+							{hasTicket && <Link className="text-xs text-primary font-medium hover:underline" to="/driver-dashboard/ticket-history" >View all →</Link>}
 						</div>
 
 						{hasTicket ? (
@@ -166,9 +166,9 @@ function DriverDashboard() {
 							<table className="w-full text-sm">
 							<thead>
 								<tr className={darkMode ? 'text-gray-500' : 'text-body'}>
-									<th className="text-xs font-semibold text-left pb-3 pr-4">Date</th>
-									<th className="text-xs font-semibold text-left pb-3 pr-4">Price</th>
-									<th className="text-xs font-semibold text-left pb-3">Status</th>
+									<th className="text-xs font-medium text-left pb-3 pr-4">Date</th>
+									<th className="text-xs font-medium text-left pb-3 pr-4">Price</th>
+									<th className="text-xs font-medium text-left pb-3">Status</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -179,9 +179,9 @@ function DriverDashboard() {
 									style={{ borderTop: darkMode ? '1px solid #1f2937' : '1px solid #f1f5f9' }}
 								>
 									<td className={`py-2.5 pr-4 text-xs ${darkMode ? 'text-gray-300' : 'text-header'}`}>{p.date}</td>
-									<td className={`py-2.5 pr-4 text-xs font-medium ${darkMode ? 'text-gray-200' : 'text-header'}`}>{p.price}</td>
+									<td className={`py-2.5 pr-4 text-sm font-semibold ${darkMode ? 'text-gray-200' : 'text-header'}`}>{p.price}</td>
 									<td className="py-2.5">
-									<span className={`text-xs font-semibold px-2.5 py-1 rounded-full
+									<span className={`text-xs font-semibold px-2 py-0.5 rounded-md
 										${p.status === 'Active'
 										? 'bg-[#E5FFF1] text-[#00AE4E]'
 										: darkMode
@@ -208,9 +208,9 @@ function DriverDashboard() {
 				</div>
 
 				{/* QR Code panel */}
-				<div className={`p-6 rounded-2xl border shadow-sm flex flex-col transition-colors ${card}`}>
+				<div className={`p-6 rounded-2xl border shadow-sm flex flex-col hover:shadow-md transition-colors ${card}`}>
 				<div className="flex items-center justify-between mb-5">
-					<h2 className={`text-base font-semibold ${darkMode ? 'text-white' : 'text-header'}`}>QR Code</h2>
+					<h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-header'}`}>QR Code</h2>
 					{!hasTicket && (
 					<span className={`text-xs px-2.5 py-1 rounded-full font-medium ${darkMode ? 'bg-gray-800 text-body' : 'bg-gray-100 text-body'}`}>
 						Locked

@@ -54,7 +54,7 @@ export default function SideBar({ sidebarOpen, setSidebarOpen, activeNav, sideba
                     className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all
                     ${dk
                         ? 'text-gray-400 hover:bg-gray-800 hover:text-gray-100'
-                        : 'text-[#0F1729] hover:bg-gray-100 hover:text-gray-800'
+                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
                     }`}
                 >
                     <div className="flex items-center gap-3">
@@ -68,7 +68,7 @@ export default function SideBar({ sidebarOpen, setSidebarOpen, activeNav, sideba
 
                 {/* Logout */}
                 <button className={`flex items-center w-full px-4 py-2.5 rounded-xl text-sm font-medium gap-3 transition-all
-                    ${dk ? 'text-gray-400 hover:bg-gray-800 hover:text-red-400' : 'text-gray-400 hover:bg-red-50 hover:text-red-500'}`}>
+                    ${dk ? 'text-gray-400 hover:bg-gray-800 hover:text-red-400' : 'text-gray-700 hover:bg-red-50 hover:text-red-500'}`}>
                     <LogOut size={18} />
                     Log out
                 </button>
