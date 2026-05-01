@@ -1,20 +1,167 @@
-import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
-import AuthLayout from '../layout/AuthLayout';
+import { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import AuthLayout from '../../layout/AuthLayout';
+import { registerDriver } from "../../services/auth";
 
 export default function Signup() {
+    const navigate = useNavigate();
+
+    const [globalError, setGlobalError] = useState('');
+    const [errors, setErrors] = useState({});
+    
+    // Form States
     const [fullName, setFullName] = useState("");
     const [phone, setPhone] = useState("");
-    const [idType, setIdType] = useState("drivers-license");
+    const [idType, setIdType] = useState("license");
     const [licenseFile, setLicenseFile] = useState(null);
     const [vehicleReg, setVehicleReg] = useState("");
     const [lga, setLga] = useState("");
     const [area, setArea] = useState("");
     const [pin, setPin] = useState("");
     const [confirmPin, setConfirmPin] = useState("");
+    
+    // UI & API States
     const [showPin, setShowPin] = useState(false);
     const [showConfirmPin, setShowConfirmPin] = useState(false);
+    const [areas, setAreas] = useState([]);
+    const [isLoadingAreas, setIsLoadingAreas] = useState(false);
     const fileInputRef = useRef(null);
+
+    // Fetch Areas on component mount
+    useEffect(() => {
+        const fetchAreas = async () => {
+            setIsLoadingAreas(true);
+            try {
+                const response = await fetch("https://kowope-backend-service.onrender.com/api/v1/areas");
+                const data = await response.json();
+                
+                if (data && data.results) {
+                    setAreas(data.results);
+                }
+            } catch (error) {
+                console.error("Failed to fetch areas:", error);
+                toast.error("Failed to load areas");
+            } finally {
+                setIsLoadingAreas(false);
+            }
+        };
+
+        fetchAreas();
+    }, []);
+
+    const validateForm = () => {
+        const newErrors = {};
+        
+        if (!fullName.trim()) newErrors.fullName = "Full name is required";
+        if (!phone.trim()) newErrors.phone = "Phone number is required";
+        if (!vehicleReg.trim()) newErrors.vehicleReg = "Vehicle registration is required";
+        if (!lga) newErrors.lga = "Please select your LGA";
+        if (!area) newErrors.area = "Please select your area";
+        
+        if (!licenseFile) {
+            newErrors.licenseFile = "ID document is required";
+        }
+
+        if (!pin) {
+            newErrors.pin = "PIN is required";
+        } else if (pin.length < 4) {
+            newErrors.pin = "PIN must be 4 digits";
+        }
+        
+        if (pin !== confirmPin) {
+            newErrors.confirmPin = "PINs do not match";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setGlobalError('');
+        setErrors({});
+
+        if (validateForm()) {
+            const payload = new FormData();
+            payload.append('full_name', fullName);
+            payload.append('phone_number', phone);
+            payload.append('document_type', idType);
+            payload.append('license_number', vehicleReg);
+            payload.append('lga', lga);
+            
+            // This will now append the UUID string correctly
+            payload.append('area', area); 
+            
+            payload.append('pin', pin);
+            payload.append('confirm_pin', confirmPin);
+            payload.append('document', licenseFile);
+
+            mutation.mutate(payload);
+        }
+    };
+
+    const mutation = useMutation({
+        mutationFn: (payload) => registerDriver(payload),
+        onSuccess: (data) => {
+            toast.success("Registration successful 🎉");
+            navigate("/driver-dashboard");
+        },
+        onError: async (error) => {
+            const responseData = error?.response?.data;
+            const backendErrors = responseData?.errors || responseData;
+
+            if (backendErrors && typeof backendErrors === 'object') {
+                const formattedErrors = {};
+                let mappedAtLeastOneField = false;
+
+                Object.keys(backendErrors).forEach((key) => {
+                    if (key === 'message' && typeof backendErrors[key] === 'string') return;
+
+                    mappedAtLeastOneField = true;
+                    
+                    const errorMessages = Array.isArray(backendErrors[key]) 
+                        ? backendErrors[key] 
+                        : [backendErrors[key]];
+
+                    const fieldMap = {
+                        full_name: "fullName",
+                        phone_number: "phone",
+                        document_type: "idType",
+                        license_number: "vehicleReg",
+                        lga: "lga",
+                        area: "area",
+                        pin: "pin",
+                        confirm_pin: "confirmPin",
+                        document: "licenseFile",
+                    };
+
+                    const frontendKey = fieldMap[key] || key; 
+                    formattedErrors[frontendKey] = errorMessages.join(", ");
+
+                    errorMessages.forEach((msg) => {
+                        const cleanKey = key.replace(/_/g, ' ').toUpperCase();
+                        toast.error(`${cleanKey}: ${msg}`);
+                    });
+                });
+
+                if (mappedAtLeastOneField) {
+                    setErrors((prev) => ({ ...prev, ...formattedErrors }));
+                    return; 
+                }
+            } 
+          
+            if (responseData?.message) {
+                setGlobalError(responseData.message);
+                toast.error(responseData.message);
+            } else {
+                const fallbackError = error.message || "An unexpected error occurred. Please try again later.";
+                setGlobalError(fallbackError);
+                toast.error("Registration failed.");
+            }
+        },
+    });
 
     const lgaOptions = [
         "Agege", "Ajeromi-Ifelodun", "Alimosho", "Amuwo-Odofin",
@@ -23,31 +170,14 @@ export default function Signup() {
         "Lagos Mainland", "Mushin", "Ojo", "Oshodi-Isolo", "Shomolu", "Surulere",
     ];
 
-    const areaOptions = {
-        Ikeja: ["Allen Avenue", "Oregun", "Alausa", "GRA", "Opebi"],
-        "Lagos Island": ["Victoria Island", "Ikoyi", "Onikan", "Marina"],
-        Alimosho: ["Idimu", "Egbeda", "Ipaja", "Shasha", "Akowonjo"],
-    };
-
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) setLicenseFile(file);
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Signup submitted", {
-            fullName, phone, idType, licenseFile, vehicleReg, lga, area, pin,
-        });
-    };
-
+    // Icons
     const EyeIcon = ({ open }) => (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 text-gray-400"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
             {open ? (
                 <path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 110-10A5 5 0 0110 15zm0-8a3 3 0 100 6 3 3 0 000-6z" />
             ) : (
@@ -56,32 +186,29 @@ export default function Signup() {
         </svg>
     );
 
-    const DotsIcon = () => (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-        </svg>
-    );
-
     return (
         <AuthLayout>
             <div className="flex flex-col items-center w-full">
-                {/* Heading */}
                 <div className="text-center mb-8">
                     <h1 className="text-2xl font-bold text-header">
-                        A Swift Digital ticketing for drivers
+                        Swift Digital Ticketing for Drivers
                     </h1>
                     <p className="text-body text-sm mt-1">
-                        Don't have an account, create one to purchase ticket seamlessly
+                        Don't have an account? Create one to purchase tickets seamlessly
                     </p>
                 </div>
 
-                {/* Card */}
                 <div className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-8">
                     <h2 className="text-xl font-bold text-header mb-1">Create Your Account</h2>
                     <p className="text-body text-sm mb-6">Register as a driver to start buying digital tickets</p>
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    {globalError && (
+                        <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm mb-5">
+                            {globalError}
+                        </div>
+                    )}
 
+                    <form onSubmit={handleSubmit} className="space-y-5">
                         {/* Full Name */}
                         <div>
                             <label className="block text-sm font-semibold text-header mb-1">Full Name</label>
@@ -93,10 +220,8 @@ export default function Signup() {
                                     onChange={(e) => setFullName(e.target.value)}
                                     className="bg-transparent flex-1 outline-none text-gray-600 text-sm placeholder-gray-400"
                                 />
-                                <button type="button" className="bg-gray-200 rounded-md p-1 flex items-center justify-center" title="More options">
-                                    <DotsIcon />
-                                </button>
                             </div>
+                            {errors.fullName && <p className="text-xs text-red-500 mt-1">{errors.fullName}</p>}
                         </div>
 
                         {/* Phone Number */}
@@ -110,10 +235,8 @@ export default function Signup() {
                                     onChange={(e) => setPhone(e.target.value)}
                                     className="bg-transparent flex-1 outline-none text-gray-600 text-sm placeholder-gray-400"
                                 />
-                                <button type="button" className="bg-gray-200 rounded-md p-1 flex items-center justify-center" title="More options">
-                                    <DotsIcon />
-                                </button>
                             </div>
+                            {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
                         </div>
 
                         {/* ID Type */}
@@ -124,9 +247,9 @@ export default function Signup() {
                                     <input
                                         type="radio"
                                         name="idType"
-                                        value="drivers-license"
-                                        checked={idType === "drivers-license"}
-                                        onChange={() => setIdType("drivers-license")}
+                                        value="license"
+                                        checked={idType === "license"}
+                                        onChange={() => setIdType("license")}
                                         className="accent-primary w-4 h-4"
                                     />
                                     <span className="text-sm text-gray-700">Driver's License</span>
@@ -148,27 +271,28 @@ export default function Signup() {
                         {/* License Upload */}
                         <div>
                             <label className="block text-sm font-semibold text-header mb-1">
-                                {idType === "drivers-license" ? "Driver's License" : "NIN Slip"}
+                                {idType === "license" ? "Driver's License" : "NIN Slip"}
                             </label>
                             <div
                                 onClick={() => fileInputRef.current.click()}
-                                className="border-2 border-dashed border-gray-200 rounded-lg py-5 flex flex-col items-center justify-center cursor-pointer hover:border-yellow-400 transition-colors bg-gray-50"
+                                className={`border-2 border-dashed rounded-lg py-5 flex flex-col items-center justify-center cursor-pointer transition-colors bg-gray-50 ${errors.licenseFile ? 'border-red-400' : 'border-gray-200 hover:border-yellow-400'}`}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                 </svg>
                                 <span className="text-sm text-gray-500 font-medium">
-                                    {idType === "drivers-license" ? "Upload Driver's License" : "Upload NIN Slip"}
+                                    {licenseFile ? licenseFile.name : (idType === "license" ? "Upload Driver's License" : "Upload NIN Slip")}
                                 </span>
                                 <input
                                     ref={fileInputRef}
                                     type="file"
-                                    accept=".pdf,.jpg,.jpeg"
+                                    accept=".pdf,.jpg,.jpeg,.png"
                                     onChange={handleFileChange}
                                     className="hidden"
                                 />
                             </div>
-                            <p className="text-xs text-gray-400 mt-1">PDF and JPEG formats, up to 5 MB</p>
+                            <p className="text-xs tracking-wide text-gray-400 mt-1">PDF and JPEG formats, up to 5 MB</p>
+                            {errors.licenseFile && <p className="text-xs text-red-500 mt-1">{errors.licenseFile}</p>}
                         </div>
 
                         {/* Vehicle Registration Number */}
@@ -183,6 +307,7 @@ export default function Signup() {
                                     className="bg-transparent w-full outline-none text-gray-600 text-sm placeholder-gray-400"
                                 />
                             </div>
+                            {errors.vehicleReg && <p className="text-xs text-red-500 mt-1">{errors.vehicleReg}</p>}
                         </div>
 
                         {/* LGA */}
@@ -205,9 +330,10 @@ export default function Signup() {
                                     </svg>
                                 </span>
                             </div>
+                            {errors.lga && <p className="text-xs text-red-500 mt-1">{errors.lga}</p>}
                         </div>
 
-                        {/* Area */}
+                        {/* Dynamic Area Fetching */}
                         <div>
                             <label className="block text-sm font-semibold text-header mb-1">Area</label>
                             <div className="relative">
@@ -215,11 +341,15 @@ export default function Signup() {
                                     value={area}
                                     onChange={(e) => setArea(e.target.value)}
                                     className="w-full bg-gray-100 rounded-lg px-3 py-3 text-sm text-gray-500 outline-none appearance-none cursor-pointer"
-                                    disabled={!lga}
+                                    disabled={!lga || isLoadingAreas}
                                 >
-                                    <option value="">Select your area</option>
-                                    {(areaOptions[lga] || []).map((a) => (
-                                        <option key={a} value={a}>{a}</option>
+                                    <option value="">
+                                        {isLoadingAreas ? "Loading areas..." : "Select your area"}
+                                    </option>
+                                    {areas.map((a) => (
+                                        <option key={a.id} value={a.id}>
+                                            {a.name}
+                                        </option>
                                     ))}
                                 </select>
                                 <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -228,6 +358,7 @@ export default function Signup() {
                                     </svg>
                                 </span>
                             </div>
+                            {errors.area && <p className="text-xs text-red-500 mt-1">{errors.area}</p>}
                         </div>
 
                         {/* Create PIN */}
@@ -251,7 +382,8 @@ export default function Signup() {
                                     <EyeIcon open={showPin} />
                                 </button>
                             </div>
-                            <p className="text-xs text-gray-400 mt-1">Do not use common PINs like 1234, 0000, etc.</p>
+                            <p className="text-xs tracking-wide text-gray-400 mt-1">Do not use common PINs like 1234, 0000, etc.</p>
+                            {errors.pin && <p className="text-xs text-red-500 mt-1">{errors.pin}</p>}
                         </div>
 
                         {/* Confirm PIN */}
@@ -275,14 +407,16 @@ export default function Signup() {
                                     <EyeIcon open={showConfirmPin} />
                                 </button>
                             </div>
+                            {errors.confirmPin && <p className="text-xs text-red-500 mt-1">{errors.confirmPin}</p>}
                         </div>
 
                         {/* Submit */}
                         <button
                             type="submit"
-                            className="w-full bg-primary hover:bg-primary-hover text-gray-900 font-bold py-3.5 rounded-xl transition-colors text-base"
+                            disabled={mutation.isPending}
+                            className="w-full bg-primary hover:bg-primary-hover text-gray-900 font-bold py-3.5 rounded-xl transition-colors text-base disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Register
+                            {mutation.isPending ? "Registering..." : "Register"}
                         </button>
 
                         {/* Login Link */}
