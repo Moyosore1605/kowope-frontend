@@ -13,7 +13,7 @@ export const registerDriver = async (payload) => {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(payload),
+            body: payload,
             credentials: "include"
 		}
 	);
