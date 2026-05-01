@@ -97,20 +97,25 @@ function DriverDashboard() {
 		return () => clearInterval(t);
 	}, [hasTicket]);
 
+	const isUrgent = countdown.h < 2;
+
   	return (
         <div className="flex-1 p-6 transition-colors duration-200">
 
 			<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
 				<div>
 					<h1 className={`text-2xl md:text-3xl font-bold mb-1 ${darkMode ? 'text-white' : 'text-header'}`}>
-						Hello, Micheal Blaq.
+						Welcome back, Micheal.
 					</h1>
 					<p className={`text-sm ${hasTicket ? 'text-[#00AE4E] font-medium' : darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-						{hasTicket ? 'You have an active ticket for today.' : "You don't have an active ticket for today."}
+						{hasTicket ? "You're cleared to operate today." : "You don't have an active ticket for today."}
 					</p>
 				</div>
-				<Link className="bg-primary hover:bg-primary-hover active:bg-primary-active text-gray-900 font-semibold py-2.5 px-8 rounded-xl transition-all shadow-sm text-sm whitespace-nowrap flex justify-center items-center" to="/driver-dashboard/buy-ticket">
-					Buy Ticket
+				<Link
+					className="bg-primary hover:bg-primary-hover active:bg-primary-active text-gray-900 font-semibold py-2.5 px-8 rounded-xl transition-all shadow-sm text-sm whitespace-nowrap flex justify-center items-center"
+					to={hasTicket ? "/driver-dashboard/ticket" : "/driver-dashboard/buy-ticket"}
+				>
+					{hasTicket ? "View Ticket" : "Buy Ticket"}
 				</Link>
 			</div>
 
@@ -120,7 +125,13 @@ function DriverDashboard() {
 				<div className="lg:col-span-2 flex flex-col gap-5">
 
 				{/* Status card */}
-					<div className={`p-6 rounded-2xl border shadow-sm transition-colors ${card}`}>
+					<div className={`p-6 rounded-2xl border shadow-sm transition-colors ${
+					hasTicket
+						? darkMode
+						? "bg-green-900/20 border-green-800"
+						: "bg-[#F0FFF7] border-[#D1FAE5]"
+						: card
+					}`}>
 						<h2 className={`text-base font-semibold mb-4 ${darkMode ? 'text-white' : 'text-header'}`}>Today's Status</h2>
 						{hasTicket ? (
 						<>
@@ -128,9 +139,9 @@ function DriverDashboard() {
 								<div className="w-5 h-5 rounded-full bg-[#00AE4E] flex items-center justify-center shrink-0">
 									<Check size={11} className="text-white" strokeWidth={3} />
 								</div>
-								<span className="text-[#00AE4E] text-sm">Active - Paid</span>
+								<span className="text-[#00AE4E] text-sm font-semibold">Ticket Active</span>
 							</div>
-							<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-body'}`}>Valid for today only</p>
+							<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-body'}`}>Expires today</p>
 						</>
 						) : (
 						<>
@@ -162,14 +173,20 @@ function DriverDashboard() {
 							</thead>
 							<tbody>
 								{payments.map((p, i) => (
-								<tr key={i} style={{ borderTop: darkMode ? '1px solid #1f2937' : '1px solid #f1f5f9' }}>
+								<tr
+									key={i}
+									className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+									style={{ borderTop: darkMode ? '1px solid #1f2937' : '1px solid #f1f5f9' }}
+								>
 									<td className={`py-2.5 pr-4 text-xs ${darkMode ? 'text-gray-300' : 'text-header'}`}>{p.date}</td>
 									<td className={`py-2.5 pr-4 text-xs font-medium ${darkMode ? 'text-gray-200' : 'text-header'}`}>{p.price}</td>
 									<td className="py-2.5">
 									<span className={`text-xs font-semibold px-2.5 py-1 rounded-full
 										${p.status === 'Active'
 										? 'bg-[#E5FFF1] text-[#00AE4E]'
-										: 'bg-[#FDF0EC] text-[#E54545]'}`}>
+										: darkMode
+											? 'bg-gray-800 text-gray-400'
+											: 'bg-gray-100 text-gray-500'}`}>
 										{p.status}
 									</span>
 									</td>
@@ -221,8 +238,15 @@ function DriverDashboard() {
 						{/* Countdown */}
 						<div className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl mt-1
 							${darkMode ? 'bg-orange-900/30 border border-orange-800' : 'bg-orange-50 border border-orange-100'}`}>
-							<Clock size={15} className="text-orange-500 shrink-0" />
-							<span className="text-xs font-semibold text-orange-500">
+							<Clock
+								size={15}
+								className={`shrink-0 ${isUrgent ? 'text-red-500' : 'text-orange-500'}`}
+							/>
+							<span
+								className={`text-xs font-semibold ${
+									isUrgent ? 'text-red-500' : 'text-orange-500'
+								}`}
+							>
 								Expires in {String(countdown.h).padStart(2, '0')}h {String(countdown.m).padStart(2, '0')}m {String(countdown.s).padStart(2, '0')}s
 							</span>
 						</div>
@@ -242,6 +266,9 @@ function DriverDashboard() {
 						</div>
 						<div className="text-center">
 							<p className={`text-sm font-semibold mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>QR unavailable</p>
+							<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+								Purchase a ticket to unlock access
+							</p>
 							<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Available after payment</p>
 						</div>
 					</div>
