@@ -3,6 +3,7 @@ import {
 	TriangleAlert, Lock, ReceiptText, Check, Clock, Share2
 } from 'lucide-react';
 import { Link } from "react-router-dom";
+import QRCode from "react-qr-code";
 import { DarkModeContext } from "../../context/DarkModeState";
 
 const payments = [
@@ -36,32 +37,10 @@ const QR_MAP = [
 	[0,1,1,0,0,0,0,1,1,0],
 ];
 
-function QRCode({ darkMode }) {
-	return (
-		<div
-		style={{
-			display: 'grid',
-			gridTemplateColumns: 'repeat(10, 1fr)',
-			gap: 2,
-			padding: 12,
-			borderRadius: 12,
-			width: 140,
-			height: 140,
-			background: darkMode ? '#1e293b' : '#f8fafc',
-		}}
-		>
-		{QR_MAP.flat().map((v, i) => (
-			<div
-			key={i}
-			style={{
-				background: v ? (darkMode ? '#e2e8f0' : '#1e293b') : 'transparent',
-				borderRadius: 2,
-			}}
-			/>
-		))}
-		</div>
-	);
-}
+const qrPayload = JSON.stringify({
+	ref: ticketInfo.reference,
+	exp: ticketInfo.validFor,
+});
 
 function DetailRow({ label, value, darkMode }) {
 	return (
@@ -77,9 +56,10 @@ function DetailRow({ label, value, darkMode }) {
 
 function DriverDashboard() {
 	const [hasTicket, setHasTicket] = useState(true);
-	const [countdown, setCountdown] = useState({ h: 23, m: 59, s: 0 });
+	const [countdown, setCountdown] = useState({ h: 1, m: 23, s: 45 });
 	const { darkMode } = useContext(DarkModeContext);
 
+	const expiryTime = new Date("2026-02-12T23:59:59");
 	const card = darkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-100";
 
 	useEffect(() => {
@@ -130,39 +110,39 @@ function DriverDashboard() {
 
 					{hasTicket ? (
 						<div className="flex items-center justify-between">
-						<div>
-							<div className="flex items-center gap-2 font-medium mb-2">
-							<div className="w-5 h-5 rounded-full bg-[#00AE4E] flex items-center justify-center shrink-0">
-								<Check size={11} className="text-white" strokeWidth={3} />
+							<div>
+								<div className="flex items-center gap-2 font-medium mb-2">
+									<div className="w-5 h-5 rounded-full bg-[#00AE4E] flex items-center justify-center shrink-0">
+										<Check size={11} className="text-white" strokeWidth={3} />
+									</div>
+									<span className="text-[#00AE4E] text-sm font-semibold">Ticket Active</span>
+								</div>
+								<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-body'}`}>Expires today</p>
 							</div>
-							<span className="text-[#00AE4E] text-sm font-semibold">Ticket Active</span>
-							</div>
-							<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-body'}`}>Expires today</p>
-						</div>
-						<Link
-							to="/driver-dashboard/ticket"
-							className="bg-primary hover:bg-primary-hover text-gray-900 font-semibold py-2 px-5 rounded-xl text-sm transition-all shadow-sm whitespace-nowrap"
-						>
-							View Ticket
-						</Link>
+							<Link
+								to="/driver-dashboard/ticket"
+								className="bg-primary hover:bg-primary-hover text-gray-900 font-semibold py-2 px-5 rounded-xl text-sm transition-all shadow-sm whitespace-nowrap"
+							>
+								View Ticket
+							</Link>
 						</div>
 					) : (
 						<div className="flex items-center justify-between">
-						<div>
-							<div className="flex items-center gap-2 text-red-500 font-medium mb-2">
-							<TriangleAlert size={17} className="shrink-0" />
-							<span className="text-sm">Inactive — Ticket not paid</span>
+							<div>
+								<div className="flex items-center gap-2 text-red-500 font-medium mb-2">
+									<TriangleAlert size={17} className="shrink-0" />
+									<span className="text-sm">Inactive — Ticket not paid</span>
+								</div>
+								<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-body'}`}>
+									Pay your daily ticket to operate today.
+								</p>
 							</div>
-							<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-body'}`}>
-							Pay your daily ticket to operate today.
-							</p>
-						</div>
-						<Link
-							to="/driver-dashboard/buy-ticket"
-							className="bg-primary hover:bg-primary-hover text-gray-900 font-semibold py-2 px-5 rounded-xl text-sm transition-all shadow-sm whitespace-nowrap"
-						>
-							Buy Ticket
-						</Link>
+							<Link
+								to="/driver-dashboard/buy-ticket"
+								className="bg-primary hover:bg-primary-hover text-gray-900 font-semibold py-2 px-5 rounded-xl text-sm transition-all shadow-sm whitespace-nowrap"
+							>
+								Buy Ticket
+							</Link>
 						</div>
 					)}
 					</div>
@@ -211,7 +191,7 @@ function DriverDashboard() {
 						) : (
 						<div className="flex flex-col items-center justify-center gap-2 py-10">
 							<div className={`w-10 h-10 rounded-xl flex items-center justify-center ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
-							<ReceiptText size={20} className={darkMode ? 'text-gray-600' : 'text-gray-300'} />
+								<ReceiptText size={20} className={darkMode ? 'text-gray-600' : 'text-gray-300'} />
 							</div>
 							<p className={`text-sm font-medium ${darkMode ? 'text-gray-500' : 'text-body'}`}>No recent payments</p>
 							<p className={`text-xs ${darkMode ? 'text-gray-600' : 'text-gray-300'}`}>Payments will appear here after purchase</p>
@@ -222,73 +202,79 @@ function DriverDashboard() {
 
 				{/* QR Code panel */}
 				<div className={`p-6 rounded-2xl border shadow-sm flex flex-col hover:shadow-md transition-colors ${card}`}>
-				<div className="flex items-center justify-between mb-5">
-					<h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-header'}`}>QR Code</h2>
-					{!hasTicket && (
-					<span className={`text-xs px-2.5 py-1 rounded-full font-medium ${darkMode ? 'bg-gray-800 text-body' : 'bg-gray-100 text-body'}`}>
-						Locked
-					</span>
-					)}
-				</div>
-
-				{hasTicket ? (
-					<div className="flex flex-col items-center gap-4">
-						<div className={`rounded-2xl p-3 border ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-100 bg-gray-50'}`}>
-							<QRCode darkMode={darkMode} />
-						</div>
-						<p className={`text-xs text-center ${darkMode ? 'text-gray-400' : 'text-body'}`}>
-							Show this QR code to the agent at the park entrance
-						</p>
-
-						<div className="w-full mt-1">
-							<DetailRow label="Ticket Reference" value={ticketInfo.reference} darkMode={darkMode} />
-							<DetailRow label="Valid For" value={ticketInfo.validFor} darkMode={darkMode} />
-							<DetailRow label="Driver" value={ticketInfo.driver} darkMode={darkMode} />
-							<DetailRow label="Vehicle" value={ticketInfo.vehicle} darkMode={darkMode} />
-							<DetailRow label="Purchased" value={ticketInfo.purchased} darkMode={darkMode} />
-						</div>
-
-						{/* Countdown */}
-						<div className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl mt-1
-							${darkMode ? 'bg-orange-900/30 border border-orange-800' : 'bg-orange-50 border border-orange-100'}`}>
-							<Clock
-								size={15}
-								className={`shrink-0 ${isUrgent ? 'text-red-500' : 'text-orange-500'}`}
-							/>
-							<span
-								className={`text-xs font-semibold ${
-									isUrgent ? 'text-red-500' : 'text-orange-500'
-								}`}
-							>
-								Expires in {String(countdown.h).padStart(2, '0')}h {String(countdown.m).padStart(2, '0')}m {String(countdown.s).padStart(2, '0')}s
-							</span>
-						</div>
-
-						{/* Share */}
-						<button className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold border transition-all
-							${darkMode ? 'border-gray-700 text-gray-200 hover:bg-gray-800' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}>
-							<Share2 size={15} />
-							Share Ticket
-						</button>
+					<div className="flex items-center justify-between mb-5">
+						<h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-header'}`}>QR Code</h2>
+						{!hasTicket && (
+						<span className={`text-xs px-2.5 py-1 rounded-full font-medium ${darkMode ? 'bg-gray-800 text-body' : 'bg-gray-100 text-body'}`}>
+							Locked
+						</span>
+						)}
 					</div>
-				) : (
-					<div className="flex-1 flex flex-col items-center justify-center gap-4">
-						<div className={`rounded-2xl p-8 w-full flex items-center justify-center aspect-square border-2 border-dashed transition-colors
-							${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-100 bg-gray-50'}`}>
-							<Lock size={36} className={darkMode ? 'text-gray-600' : 'text-gray-300'} strokeWidth={1.5} />
-						</div>
-						<div className="text-center">
-							<p className={`text-sm font-semibold mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>QR unavailable</p>
-							<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-								Purchase a ticket to unlock access
+
+					{hasTicket ? (
+						<div className="flex flex-col items-center gap-4">
+							<div className={`rounded-2xl p-3 border ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-100 bg-gray-50'}`}>
+								<div className="transition-transform duration-300 hover:scale-105">
+									<QRCode
+										value={qrPayload}
+										size={140}
+										bgColor={darkMode ? "#1e293b" : "#ffffff"}
+										fgColor={darkMode ? "#e2e8f0" : "#000000"}
+									/>
+								</div>
+							</div>
+							<p className={`text-xs text-center ${darkMode ? 'text-gray-400' : 'text-body'}`}>
+								Show this QR code to the agent at the park entrance
 							</p>
-							<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Available after payment</p>
-						</div>
-					</div>
-				)}
-				</div>
 
-			</div>
+							<div className="w-full mt-1">
+								<DetailRow label="Ticket Reference" value={ticketInfo.reference} darkMode={darkMode} />
+								<DetailRow label="Valid For" value={ticketInfo.validFor} darkMode={darkMode} />
+								<DetailRow label="Driver" value={ticketInfo.driver} darkMode={darkMode} />
+								<DetailRow label="Vehicle" value={ticketInfo.vehicle} darkMode={darkMode} />
+								<DetailRow label="Purchased" value={ticketInfo.purchased} darkMode={darkMode} />
+							</div>
+
+							{/* Countdown */}
+							<div className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl mt-1
+								${darkMode ? 'bg-orange-900/30 border border-orange-800' : 'bg-orange-50 border border-orange-100'}`}>
+								<Clock
+									size={15}
+									className={`shrink-0 ${isUrgent ? 'text-red-500' : 'text-orange-500'}`}
+								/>
+								<span
+									className={`text-xs font-semibold ${
+										isUrgent ? 'text-red-500' : 'text-orange-500'
+									}`}
+								>
+									Expires in {String(countdown.h).padStart(2, '0')}h {String(countdown.m).padStart(2, '0')}m {String(countdown.s).padStart(2, '0')}s
+								</span>
+							</div>
+
+							{/* Share */}
+							<button className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold border transition-all
+								${darkMode ? 'border-gray-700 text-gray-200 hover:bg-gray-800' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}>
+								<Share2 size={15} />
+								Share Ticket
+							</button>
+						</div>
+					) : (
+						<div className="flex-1 flex flex-col items-center justify-center gap-4">
+							<div className={`rounded-2xl p-8 w-full flex items-center justify-center aspect-square border-2 border-dashed transition-colors
+								${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-100 bg-gray-50'}`}>
+								<Lock size={36} className={darkMode ? 'text-gray-600' : 'text-gray-300'} strokeWidth={1.5} />
+							</div>
+							<div className="text-center">
+								<p className={`text-sm font-semibold mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>QR unavailable</p>
+								<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+									Purchase a ticket to unlock access
+								</p>
+								<p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Available after payment</p>
+							</div>
+						</div>
+					)}
+					</div>
+				</div>
         </div>
     );
 }
