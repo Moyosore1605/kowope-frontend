@@ -97,7 +97,7 @@ export default function Signup() {
             
             payload.append('pin', pin);
             payload.append('confirm_pin', confirmPin);
-            payload.append('document', licenseFile);
+            payload.append('document_file', licenseFile);
 
             mutation.mutate(payload);
         }
@@ -135,7 +135,7 @@ export default function Signup() {
                         area: "area",
                         pin: "pin",
                         confirm_pin: "confirmPin",
-                        document: "licenseFile",
+                        document_file: "licenseFile",
                     };
 
                     const frontendKey = fieldMap[key] || key; 
@@ -306,7 +306,7 @@ export default function Signup() {
                             <div className="bg-gray-100 rounded-lg px-3 py-3">
                                 <input
                                     type="text"
-                                    placeholder="ABC-123-XY"
+                                    placeholder="ABC123XY"
                                     value={vehicleReg}
                                     onChange={(e) => setVehicleReg(e.target.value)}
                                     className="bg-transparent w-full outline-none text-gray-600 text-sm placeholder-gray-400"
