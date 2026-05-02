@@ -39,11 +39,8 @@ export default function Login() {
         mutationFn: (payload) => loginDriver(payload),
         onSuccess: (data) => {
             toast.success("Welcome back! 👋");
-            const role = data?.user?.role;
-
-            if (role === "driver") {
-                navigate("/driver-dashboard"); 
-            }
+            // const role = data?.user?.role;
+            navigate("/driver-dashboard"); 
         },
         onError: (error) => {
             const responseData = error?.response?.data;
