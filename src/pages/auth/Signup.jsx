@@ -359,7 +359,7 @@ export default function Signup() {
 
                         {/* Create PIN */}
                         <div>
-                            <label className="block text-sm font-semibold text-header mb-1">Create PIN</label>
+                            <label className="block text-sm font-semibold text-header mb-1">PIN</label>
                             <div className="flex items-center bg-gray-100 rounded-lg px-3 py-3 gap-2">
                                 <input
                                     type={showPin ? "text" : "password"}
