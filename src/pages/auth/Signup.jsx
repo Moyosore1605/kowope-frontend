@@ -282,9 +282,13 @@ export default function Signup() {
                                 onClick={() => fileInputRef.current.click()}
                                 className={`border-2 border-dashed rounded-lg py-5 flex flex-col items-center justify-center cursor-pointer transition-colors bg-gray-50 ${errors.licenseFile ? 'border-red-400' : 'border-gray-200 hover:border-yellow-400'}`}
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                </svg>
+                                {!licenseFile ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                    </svg>
+                                ) : (
+                                    null
+                                )}
                                 <span className="text-sm text-gray-500 font-medium">
                                     {licenseFile ? licenseFile.name : (idType === "license" ? "Upload Driver's License" : "Upload NIN Slip")}
                                 </span>
