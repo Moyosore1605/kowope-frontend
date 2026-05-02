@@ -97,8 +97,10 @@ export default function Signup() {
     const mutation = useMutation({
         mutationFn: (payload) => registerDriver(payload),
         onSuccess: (data) => {
-            toast.success("Registration successful 🎉\nRegistered driver otp:", data.otp);
-            navigate("/verify-otp");
+            toast.success(`Registration successful 🎉\nRegistered driver otp: ${data.otp}`);
+            if (data.user.role === "driver") {
+                navigate("/verify-otp");
+            }
             // console.log("Registered driver otp:", data.otp);
         },
         onError: async (error) => {
