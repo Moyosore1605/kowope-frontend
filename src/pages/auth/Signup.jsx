@@ -26,7 +26,6 @@ export default function Signup() {
     const [showPin, setShowPin] = useState(false);
     const [showConfirmPin, setShowConfirmPin] = useState(false);
     const [areas, setAreas] = useState([]);
-    const [isLoadingAreas, setIsLoadingAreas] = useState(false);
     const fileInputRef = useRef(null);
 
     const { data, isLoading, error } = useQuery({
@@ -335,10 +334,10 @@ export default function Signup() {
                                     value={area}
                                     onChange={(e) => setArea(e.target.value)}
                                     className="w-full bg-gray-100 rounded-lg px-3 py-3 text-sm text-gray-500 outline-none appearance-none cursor-pointer"
-                                    disabled={!lga || isLoadingAreas}
+                                    disabled={isLoading}
                                 >
                                     <option value="">
-                                        {isLoadingAreas ? "Loading areas..." : "Select your area"}
+                                        {isLoading ? "Loading areas..." : "Select your area"}
                                     </option>
                                     {areas.map((a) => (
                                         <option key={a.id} value={a.id}>
