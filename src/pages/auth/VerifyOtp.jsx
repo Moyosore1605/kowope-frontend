@@ -65,7 +65,8 @@ export default function VerifyOtp() {
     const resendMutation = useMutation({
         mutationFn: (payload) => resendOtp(payload),
         onSuccess: (data) => {
-            toast.success("Code resent successfully!\nNew code: " + data.new_code);
+            toast.success(`Code resent successfully!\nNew code: ${data.otp.otp_code}`);
+            console.log("Resent OTP code (for testing):", data.otp.otp_code);
             // Optionally clear the current code input
             setCode(["", "", "", "", "", ""]);
             codeRefs[0].current.focus();
