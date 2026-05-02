@@ -47,7 +47,7 @@ export const verifyOtp = async (payload) => {
         `${BASE_URL}/api/v1/auth/driver/verify-otp`,
         {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            // headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
         }
     );
