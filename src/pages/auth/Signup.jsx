@@ -98,6 +98,7 @@ export default function Signup() {
         mutationFn: (payload) => registerDriver(payload),
         onSuccess: (data) => {
             toast.success(`Registration successful 🎉\nRegistered driver otp: ${data.otp}`);
+            sessionStorage.setItem("otp_phone", phone);
             if (data.user.role === "driver") {
                 navigate("/verify-otp");
             }

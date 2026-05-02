@@ -32,11 +32,19 @@ export default function VerifyOtp() {
         }
     };
 
+    useEffect(() => {
+	    const savedPhone = sessionStorage.getItem("otp_phone");
+        if (savedPhone) {
+            setPhone(savedPhone);
+        }
+    }, []);
+
     // Mutation for verifying the OTP
     const mutation = useMutation({
         mutationFn: (payload) => verifyOtp(payload),
         onSuccess: (data) => {
             toast.success("Verification successful!");
+            sessionStorage.removeItem("otp_phone");
             navigate("/driver-dashboard");
         },
         onError: (error) => {
