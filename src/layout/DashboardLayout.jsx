@@ -6,6 +6,9 @@ import {
     AlertTriangle, Info, Car, Moon, Sun, ChevronDown,
     Check, Clock, Share2
 } from 'lucide-react';
+import { useQuery } from "@tanstack/react-query";
+import { fetchDriverProfile } from "../../services/auth";
+import { getInitials } from "../utils";
 import { Outlet } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import NotifPanel from "../components/NotifPanel";
@@ -42,6 +45,12 @@ export default function DashboardLayout() {
     const [notifOpen, setNotifOpen] = useState(false);
     const { darkMode, setDarkMode } = useContext(DarkModeContext);
     const [activeNav, setActiveNav] = useState("Dashboard");
+
+    const { data, isLoading, error } = useQuery({
+		queryKey: ["userProfile"],
+		queryFn: fetchDriverProfile,
+		retry: false,
+	});
 
     const dk = darkMode;
     const sidebar = dk ? "bg-gray-900 border-gray-800" : "bg-white border-gray-100";
@@ -93,15 +102,31 @@ export default function DashboardLayout() {
                         </button>
 
                         <div className="flex items-center gap-2 cursor-pointer">
-                            <div className={`w-9 h-9 rounded-full bg-primary flex items-center justify-center text-gray-900 font-bold text-sm shrink-0 ring-2 ring-offset-1 transition-all
-                                ${dk ? 'ring-primary ring-offset-gray-900' : 'ring-primary/30 ring-offset-white'}`}>
-                                MB
-                            </div>
-                            <div className="hidden md:flex flex-col leading-tight">
-                                <span className={`text-sm font-semibold ${dk ? 'text-white' : 'text-header'}`}>Michael Blaq</span>
-                                <span className={`text-xs ${dk ? 'text-gray-500' : 'text-body'}`}>Driver</span>
-                            </div>
-                            {/* <ChevronDown size={15} className={`hidden md:block ${dk ? 'text-gray-500' : 'text-gray-400'}`} /> */}
+                            {isLoading ? (
+                                // Skeleton
+                                <>
+                                    <div className={`w-9 h-9 rounded-full animate-pulse ${dk ? 'bg-gray-700' : 'bg-gray-200'}`} />
+                                    <div className="hidden md:flex flex-col gap-1.5">
+                                        <div className={`h-3 w-24 rounded-lg animate-pulse ${dk ? 'bg-gray-700' : 'bg-gray-200'}`} />
+                                        <div className={`h-2.5 w-12 rounded-lg animate-pulse ${dk ? 'bg-gray-800' : 'bg-gray-100'}`} />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className={`w-9 h-9 rounded-full bg-primary flex items-center justify-center text-gray-900 font-bold text-sm shrink-0 ring-2 ring-offset-1 transition-all
+                                        ${dk ? 'ring-primary ring-offset-gray-900' : 'ring-primary/30 ring-offset-white'}`}>
+                                        {getInitials(data?.full_name || "User")}
+                                    </div>
+                                    <div className="hidden md:flex flex-col leading-tight">
+                                        <span className={`text-sm font-semibold ${dk ? 'text-white' : 'text-header'}`}>
+                                            {data?.full_name || "User"}
+                                        </span>
+                                        <span className={`text-xs ${dk ? 'text-gray-500' : 'text-body'}`}>
+                                            {data?.role ?? 'Driver'}
+                                        </span>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </header>

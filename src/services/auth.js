@@ -68,7 +68,7 @@ export const resendOtp = async (payload) => {
         `${BASE_URL}/api/v1/auth/driver/resend-otp`,
         {
             method: "POST",
-            // headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
         }
     );
@@ -82,4 +82,20 @@ export const resendOtp = async (payload) => {
     }
 
     return data;
+};
+
+const fetchDriverProfile = async () => {
+	const res = await fetch(
+		`${BASE_URL}/api/v1/auth/driver/me`,
+		{
+			method: "GET",
+			credentials: "include",
+		}
+	);
+
+	if (!res.ok) {
+		throw new Error("Failed to fetch profile");
+	}
+
+	return res.json();
 };

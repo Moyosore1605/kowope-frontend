@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthLayout from '../../layout/AuthLayout';
@@ -8,6 +8,7 @@ import { loginDriver } from "../../services/auth";
 
 export default function Login() {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const [globalError, setGlobalError] = useState('');
     const [errors, setErrors] = useState({});
@@ -39,6 +40,7 @@ export default function Login() {
         mutationFn: (payload) => loginDriver(payload),
         onSuccess: (data) => {
             toast.success("Welcome back! 👋");
+            queryClient.invalidateQueries(["userProfile"]);
             // const role = data?.user?.role;
             navigate("/driver-dashboard"); 
         },

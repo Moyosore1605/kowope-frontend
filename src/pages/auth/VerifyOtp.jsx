@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, UserCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthLayout from '../../layout/AuthLayout';
@@ -8,6 +8,7 @@ import { verifyOtp, resendOtp } from "../../services/auth";
 
 export default function VerifyOtp() {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const [globalError, setGlobalError] = useState('');
     const [errors, setErrors] = useState({});
@@ -45,6 +46,7 @@ export default function VerifyOtp() {
         onSuccess: (data) => {
             toast.success("Verification successful!");
             sessionStorage.removeItem("otp_phone");
+            queryClient.invalidateQueries(["userProfile"]);
             navigate("/driver-dashboard");
         },
         onError: (error) => {
