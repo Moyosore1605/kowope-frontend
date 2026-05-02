@@ -38,20 +38,10 @@ export default function Login() {
     const mutation = useMutation({
         mutationFn: (payload) => loginDriver(payload),
         onSuccess: (data) => {
-            // Uncomment and use your auth context login method if available
-            // login(data.access_token);
-
             toast.success("Welcome back! 👋");
-
-            // Assuming the driver object has a role, adjust routing as needed
             const role = data?.user?.role;
 
-            if (role === "donor") {
-                navigate("/donor-dashboard");
-            } else if (role === "hospital") {
-                navigate("/hospital-dashboard");
-            } else {
-                // Defaulting to driver dashboard since this is a driver login
+            if (role === "driver") {
                 navigate("/driver-dashboard"); 
             }
         },

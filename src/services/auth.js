@@ -34,9 +34,51 @@ export const loginDriver = async (payload) => {
     const data = await res.json();
 
     if (!res.ok) {
-      const error = new Error(data.message || "Login failed");
-      error.response = { data };
-      throw error;
+        const error = new Error(data.message || "Login failed");
+        error.response = { data };
+        throw error;
+    }
+
+    return data;
+};
+
+export const verifyOtp = async (payload) => {
+    const res = await fetch(
+        `${BASE_URL}/api/v1/auth/driver/verify-otp`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        const error = new Error(data.message || "OTP verification failed");
+        error.response = { data };
+        throw error;
+    }
+
+    return data;
+};
+
+export const resendOtp = async (payload) => {
+    const response = await fetch(
+        `${BASE_URL}/api/v1/auth/driver/resend-otp`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        const error = new Error(data.message || "Failed to resend OTP");
+        error.response = { data };
+        throw error;
     }
 
     return data;

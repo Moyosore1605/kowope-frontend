@@ -18,7 +18,6 @@ export default function Signup() {
     const [idType, setIdType] = useState("license");
     const [licenseFile, setLicenseFile] = useState(null);
     const [vehicleReg, setVehicleReg] = useState("");
-    const [lga, setLga] = useState("");
     const [area, setArea] = useState("");
     const [pin, setPin] = useState("");
     const [confirmPin, setConfirmPin] = useState("");
@@ -30,27 +29,22 @@ export default function Signup() {
     const [isLoadingAreas, setIsLoadingAreas] = useState(false);
     const fileInputRef = useRef(null);
 
-    // Fetch Areas on component mount
-    useEffect(() => {
-        const fetchAreas = async () => {
-            setIsLoadingAreas(true);
-            try {
-                const response = await fetch("https://kowope-backend-service.onrender.com/api/v1/areas");
-                const data = await response.json();
-                
-                if (data && data.results) {
-                    setAreas(data.results);
-                }
-            } catch (error) {
-                console.error("Failed to fetch areas:", error);
-                toast.error("Failed to load areas");
-            } finally {
-                setIsLoadingAreas(false);
-            }
-        };
+    const { data, isLoading, error } = useQuery({
+	    queryKey: ["areas"],
+        queryFn: async () => {
+            const res = await fetch("https://kowope-backend-service.onrender.com/api/v1/areas");
+            if (!res.ok) throw new Error("Failed");
+            return res.json();
+        },
+        retry: 5,          // 🔄 automatic retries
+        retryDelay: 2000,  // ⏱ delay
+    });
 
-        fetchAreas();
-    }, []);
+    useEffect(() => {
+        if (data?.results) {
+            setAreas(data.results);
+        }
+    }, [data]);
 
     const validateForm = () => {
         const newErrors = {};
@@ -58,7 +52,6 @@ export default function Signup() {
         if (!fullName.trim()) newErrors.fullName = "Full name is required";
         if (!phone.trim()) newErrors.phone = "Phone number is required";
         if (!vehicleReg.trim()) newErrors.vehicleReg = "Vehicle registration is required";
-        if (!lga) newErrors.lga = "Please select your LGA";
         if (!area) newErrors.area = "Please select your area";
         
         if (!licenseFile) {
@@ -90,7 +83,6 @@ export default function Signup() {
             payload.append('phone_number', phone);
             payload.append('document_type', idType);
             payload.append('license_number', vehicleReg);
-            payload.append('lga', lga);
             
             // This will now append the UUID string correctly
             payload.append('area', area); 
@@ -106,8 +98,9 @@ export default function Signup() {
     const mutation = useMutation({
         mutationFn: (payload) => registerDriver(payload),
         onSuccess: (data) => {
-            toast.success("Registration successful 🎉");
-            navigate("/driver-dashboard");
+            toast.success("Registration successful 🎉\nRegistered driver otp:", data.otp);
+            navigate("/verify-otp");
+            // console.log("Registered driver otp:", data.otp);
         },
         onError: async (error) => {
             const responseData = error?.response?.data;
@@ -131,7 +124,6 @@ export default function Signup() {
                         phone_number: "phone",
                         document_type: "idType",
                         license_number: "vehicleReg",
-                        lga: "lga",
                         area: "area",
                         pin: "pin",
                         confirm_pin: "confirmPin",
@@ -163,13 +155,6 @@ export default function Signup() {
             }
         },
     });
-
-    const lgaOptions = [
-        "Agege", "Ajeromi-Ifelodun", "Alimosho", "Amuwo-Odofin",
-        "Apapa", "Badagry", "Epe", "Eti-Osa", "Ibeju-Lekki",
-        "Ifako-Ijaiye", "Ikeja", "Ikorodu", "Kosofe", "Lagos Island",
-        "Lagos Mainland", "Mushin", "Ojo", "Oshodi-Isolo", "Shomolu", "Surulere",
-    ];
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -320,7 +305,7 @@ export default function Signup() {
                         </div>
 
                         {/* LGA */}
-                        <div>
+                        {/* <div>
                             <label className="block text-sm font-semibold text-header mb-1">Local Government Area (LGA)</label>
                             <div className="relative">
                                 <select
@@ -340,7 +325,7 @@ export default function Signup() {
                                 </span>
                             </div>
                             {errors.lga && <p className="text-xs text-red-500 mt-1">{errors.lga}</p>}
-                        </div>
+                        </div> */}
 
                         {/* Dynamic Area Fetching */}
                         <div>
