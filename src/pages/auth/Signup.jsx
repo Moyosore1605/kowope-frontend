@@ -85,17 +85,19 @@ export default function Signup() {
         setErrors({});
 
         if (validateForm()) {
-            const payload = {
-                full_name: fullName,
-                phone_number: phone,
-                document_type: idType,
-                license_number: vehicleReg,
-                lga: lga,
-                area: area,
-                pin: pin,
-                confirm_pin: confirmPin,
-                document_file: licenseFile
-            };
+            const payload = new FormData();
+            payload.append('full_name', fullName);
+            payload.append('phone_number', phone);
+            payload.append('document_type', idType);
+            payload.append('license_number', vehicleReg);
+            payload.append('lga', lga);
+            
+            // This will now append the UUID string correctly
+            payload.append('area', area); 
+            
+            payload.append('pin', pin);
+            payload.append('confirm_pin', confirmPin);
+            payload.append('document', licenseFile);
 
             mutation.mutate(payload);
         }
@@ -133,7 +135,7 @@ export default function Signup() {
                         area: "area",
                         pin: "pin",
                         confirm_pin: "confirmPin",
-                        document_file: "licenseFile",
+                        document: "licenseFile",
                     };
 
                     const frontendKey = fieldMap[key] || key; 

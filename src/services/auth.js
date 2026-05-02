@@ -5,19 +5,9 @@ export const registerDriver = async (payload) => {
 		`${BASE_URL}/api/v1/auth/driver/signup`,
 		{
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-            credentials: "include"
+            body: payload,
 		}
 	);
-
-    const contentType = res.headers.get("content-type");
-
-    if (!contentType?.includes("application/json")) {
-        throw new Error("Invalid server response");
-    }
 
 	const data = await res.json();
 
@@ -38,6 +28,7 @@ export const loginDriver = async (payload) => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
+            credentials: "include"
         }
     );
 
