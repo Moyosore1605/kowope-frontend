@@ -101,7 +101,7 @@ export default function Signup() {
             if (data.user.role === "driver") {
                 navigate("/verify-otp");
             }
-            // console.log("Registered driver otp:", data.otp);
+            console.log("Registered driver otp:", data.otp);
         },
         onError: async (error) => {
             const responseData = error?.response?.data;
