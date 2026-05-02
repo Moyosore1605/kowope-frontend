@@ -68,7 +68,7 @@ export const resendOtp = async (payload) => {
         `${BASE_URL}/api/v1/auth/driver/resend-otp`,
         {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            // headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
         }
     );
