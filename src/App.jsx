@@ -13,17 +13,20 @@ import BuyTicketPage from './pages/Driver/BuyTicketPage';
 import TicketHistoryPage from './pages/Driver/TicketHistoryPage';
 import SettingsPage from './pages/Driver/SettingsPage';
 import VerifyOtp from './pages/auth/VerifyOtp';
+import { queryClient } from "./services/queryClient";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import PublicRoute from "./routes/PublicRoute";
 
 function App() {
 
-	const queryClient = new QueryClient({
-		defaultOptions: {
-			queries: {
-			retry: 1,
-			refetchOnWindowFocus: false,
-			},
-		},
-	});
+	// const queryClient = new QueryClient({
+	// 	defaultOptions: {
+	// 		queries: {
+	// 		retry: 1,
+	// 		refetchOnWindowFocus: false,
+	// 		},
+	// 	},
+	// });
 
   	return (
       	<BrowserRouter>
@@ -40,10 +43,16 @@ function App() {
 					/>
 					<Routes>
 						<Route path='/' element={<Landing />}></Route>
-						<Route path='/signup' element={<Signup />}></Route>
-						<Route path='/login' element={<Login />}></Route>
+						<Route element={<PublicRoute />}>
+							<Route path="/login" element={<Login />} />
+							<Route path="/signup" element={<Signup />} />
+						</Route>
 						<Route path='/verify-otp' element={<VerifyOtp />}></Route>
-						<Route path='/driver-dashboard' element={<DashboardLayout />}>
+						<Route path='/driver-dashboard' element={
+							<ProtectedRoute>
+								<DashboardLayout />
+							</ProtectedRoute>
+						}>
 							<Route index element={<DriverDashboard />} />
 							<Route path="buy-ticket" element={<BuyTicketPage />} />
 							<Route path="ticket-history" element={<TicketHistoryPage />} />

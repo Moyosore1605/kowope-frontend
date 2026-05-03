@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
@@ -9,6 +9,7 @@ import { loginDriver } from "../../services/auth";
 export default function Login() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const [searchParams] = useSearchParams();
 
     const [globalError, setGlobalError] = useState('');
     const [errors, setErrors] = useState({});
@@ -89,6 +90,17 @@ export default function Login() {
             });
         }
     };
+
+    useEffect(() => {
+        const reason = searchParams.get("reason");
+
+        if (reason === "session-expired") {
+            toast.error("Your session expired. Please log in again.");
+
+            // remove query param after showing toast
+            navigate("/login", { replace: true });
+        }
+    }, [searchParams, navigate]);
 
     return (
         <AuthLayout>

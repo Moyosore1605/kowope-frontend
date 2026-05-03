@@ -1,3 +1,5 @@
+import { fetchWithAuth } from "./fetchWithAuth";
+
 const BASE_URL = "https://kowope-backend-service.onrender.com"
 
 export const registerDriver = async (payload) => {
@@ -84,18 +86,8 @@ export const resendOtp = async (payload) => {
     return data;
 };
 
-export const fetchDriverProfile = async () => {
-	const res = await fetch(
-		`${BASE_URL}/api/v1/auth/driver/me`,
-		{
-			method: "GET",
-			credentials: "include",
-		}
+export const fetchDriverProfile = () => {
+	return fetchWithAuth(
+		`${BASE_URL}/api/v1/auth/driver/me`
 	);
-
-	if (!res.ok) {
-		throw new Error("Failed to fetch profile");
-	}
-
-	return res.json();
 };

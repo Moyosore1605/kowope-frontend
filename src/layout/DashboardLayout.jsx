@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
 import { fetchDriverProfile } from "../services/auth";
-import { getInitials } from "../utils";
+import { getInitials } from "../utils/getInitials";
 import { Outlet } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import NotifPanel from "../components/NotifPanel";
@@ -47,7 +47,7 @@ export default function DashboardLayout() {
     const [activeNav, setActiveNav] = useState("Dashboard");
 
     const { data, isLoading, error } = useQuery({
-		queryKey: ["userProfile"],
+		queryKey: ["driverProfile"],
 		queryFn: fetchDriverProfile,
 		retry: false,
 	});
