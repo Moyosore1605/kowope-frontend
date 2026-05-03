@@ -91,16 +91,14 @@ export default function Login() {
         }
     };
 
-    useEffect(() => {
-        const reason = searchParams.get("reason");
+    const reason = searchParams.get("reason");
 
+    useEffect(() => {
         if (reason === "session-expired") {
             toast.error("Your session expired. Please log in again.");
-
-            // remove query param after showing toast
             navigate("/login", { replace: true });
         }
-    }, [searchParams, navigate]);
+    }, [reason, navigate]);
 
     return (
         <AuthLayout>
