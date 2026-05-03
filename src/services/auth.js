@@ -87,7 +87,7 @@ export const resendOtp = async (payload) => {
 };
 
 export const fetchDriverProfile = () => {
-	return fetchWithAuth(
-		`${BASE_URL}/api/v1/auth/driver/me`
-	);
+	// return fetchWithAuth(
+	// 	`${BASE_URL}/api/v1/auth/driver/me`
+	// );
 };
