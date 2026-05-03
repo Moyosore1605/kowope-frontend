@@ -89,7 +89,7 @@ export const fetchDriverProfile = async () => {
 		`${BASE_URL}/api/v1/auth/driver/me`,
 		{
 			method: "GET",
-			// credentials: "include",
+			credentials: "include",
 		}
 	);
 
