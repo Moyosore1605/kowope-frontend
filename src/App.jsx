@@ -43,15 +43,15 @@ function App() {
 					/>
 					<Routes>
 						<Route path='/' element={<Landing />}></Route>
-						<Route element={<PublicRoute />}>
+						{/* <Route element={<PublicRoute />}> */}
 							<Route path="/login" element={<Login />} />
 							<Route path="/signup" element={<Signup />} />
-						</Route>
+						{/* </Route> */}
 						<Route path='/verify-otp' element={<VerifyOtp />}></Route>
 						<Route path='/driver-dashboard' element={
-							<ProtectedRoute>
+							
 								<DashboardLayout />
-							</ProtectedRoute>
+							
 						}>
 							<Route index element={<DriverDashboard />} />
 							<Route path="buy-ticket" element={<BuyTicketPage />} />
