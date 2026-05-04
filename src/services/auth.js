@@ -86,8 +86,19 @@ export const resendOtp = async (payload) => {
     return data;
 };
 
-export const fetchDriverProfile = () => {
-	return fetchWithAuth(
-	 	`${BASE_URL}/api/v1/auth/driver/me`
-	);
+//export const fetchDriverProfile = () => {
+	//return fetchWithAuth(
+	 	//`${BASE_URL}/api/v1/auth/driver/me`
+	//);
+//};
+
+export const fetchDriverProfile = async () => { 
+	const res = await fetch( 
+		${BASE_URL}/api/v1/auth/driver/me,
+	{ method: "GET", 
+	 credentials: "include", } ); 
+	
+	if (!res.ok) { 
+		throw new Error("Failed to fetch profile"); 
+	} return res.json(); 
 };
