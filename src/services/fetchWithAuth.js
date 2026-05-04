@@ -1,8 +1,7 @@
 import { logout } from "../utils/logout";
 
-const BASE_URL = "https://kowope-backend-service.onrender.com"
+const BASE_URL = "https://kowope-backend-service.onrender.com";
 
-let isRefreshing = false;
 let refreshPromise = null;
 
 export const refreshAccessToken = async () => {
@@ -27,6 +26,7 @@ export const fetchWithAuth = async (url, options = {}) => {
 		credentials: "include",
 	});
 
+	// 🔁 Handle expired access token
 	if (res.status === 401) {
 		try {
 			// ensure only ONE refresh happens globally
@@ -38,22 +38,25 @@ export const fetchWithAuth = async (url, options = {}) => {
 
 			await refreshPromise;
 
-			// retry original request once
+			// retry request once
 			res = await fetch(url, {
 				...options,
 				credentials: "include",
 			});
-		} catch (err) {
-			if (!isLoggingOut) {
-				isLoggingOut = true;
+
+			// ❌ still unauthorized after refresh → session is dead
+			if (res.status === 401) {
 				logout();
-				window.location.href = "/login?reason=session-expired";
+				throw new Error("AUTH_EXPIRED");
 			}
 
+		} catch (err) {
+			logout();
 			throw new Error("AUTH_EXPIRED");
 		}
 	}
 
+	// ❌ other errors
 	if (!res.ok) {
 		const data = await res.json().catch(() => ({}));
 		throw new Error(data.message || "REQUEST_FAILED");
