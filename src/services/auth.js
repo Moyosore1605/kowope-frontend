@@ -94,7 +94,7 @@ export const resendOtp = async (payload) => {
 
 export const fetchDriverProfile = async () => { 
 	const res = await fetch( 
-		${BASE_URL}/api/v1/auth/driver/me,
+		`${BASE_URL}/api/v1/auth/driver/me`,
 	{ method: "GET", 
 	 credentials: "include", } ); 
 	
