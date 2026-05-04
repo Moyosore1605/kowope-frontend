@@ -8,8 +8,8 @@ const benefits = [
                 <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" strokeLinecap="round" />
             </svg>
         ),
-        title: 'Eliminate Agberos',
-        description: 'No more informal ticket collectors. Digital system replaces the chaos.',
+        title: 'Digitize Ticket Collection',
+        description: 'Replace manual cash collection with a secure and seamless digital payment system.',
         accent: '#3B5BDB',
     },
     {
