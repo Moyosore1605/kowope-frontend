@@ -28,33 +28,35 @@ export const fetchWithAuth = async (url, options = {}) => {
 	});
 
 	if (res.status === 401) {
-		if (!isRefreshing) {
-			isRefreshing = true;
-			refreshPromise = refreshAccessToken()
-				.finally(() => {
-					isRefreshing = false;
-				});
-		}
-
 		try {
+			// ensure only ONE refresh happens globally
+			if (!refreshPromise) {
+				refreshPromise = refreshAccessToken().finally(() => {
+					refreshPromise = null;
+				});
+			}
+
 			await refreshPromise;
 
-			// retry request
+			// retry original request once
 			res = await fetch(url, {
 				...options,
 				credentials: "include",
 			});
 		} catch (err) {
-            logout();
-			throw new Error("Session expired");
+			if (!isLoggingOut) {
+				isLoggingOut = true;
+				logout();
+				window.location.href = "/login?reason=session-expired";
+			}
+
+			throw new Error("AUTH_EXPIRED");
 		}
 	}
 
 	if (!res.ok) {
 		const data = await res.json().catch(() => ({}));
-		const error = new Error(data.message || "Request failed");
-		error.response = { data };
-		throw error;
+		throw new Error(data.message || "REQUEST_FAILED");
 	}
 
 	return res.json();
