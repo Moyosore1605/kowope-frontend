@@ -21,18 +21,19 @@ export const refreshAccessToken = async () => {
 		}
 	);
 
-	if (!res.ok) {
-		throw new Error("Refresh failed");
-	}
-
 	const data = await res.json();
+
+	if (!res.ok || !data?.success) {
+		const err = new Error(data?.message || "Refresh failed");
+		err.code = "SESSION_EXPIRED"; // attach a code for easy matching upstream
+		throw err;
+	}
 
 	if (!data?.access_token) {
 		throw new Error("No access token returned");
 	}
 
 	setAccessToken(data.access_token);
-
 	return data.access_token;
 };
 
