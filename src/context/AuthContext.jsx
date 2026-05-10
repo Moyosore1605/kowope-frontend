@@ -27,8 +27,7 @@ export const AuthProvider = ({ children }) => {
 		const bootstrapAuth = async () => {
 			try {
 				// restore access token
-				const restored =
-					await restoreSession();
+				const restored = await restoreSession();
 
 				if (!restored) {
 					setAuthStatus(
@@ -38,8 +37,7 @@ export const AuthProvider = ({ children }) => {
 				}
 
 				// fetch user profile
-				const profile =
-					await fetchDriverProfile();
+				const profile = await fetchDriverProfile();
 
 				setUser(profile);
 

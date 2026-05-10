@@ -19,14 +19,14 @@ export default function PublicRoute() {
 	}
 
 	// already authenticated
-	if (authStatus === "authenticated") {
-		return (
-			<Navigate
-				to="/driver-dashboard"
-				replace
-			/>
-		);
-	}
+	// if (authStatus === "authenticated") {
+	// 	return (
+	// 		<Navigate
+	// 			to="/driver-dashboard"
+	// 			replace
+	// 		/>
+	// 	);
+	// }
 
 	// offline/server-error users
 	// may still access login page
