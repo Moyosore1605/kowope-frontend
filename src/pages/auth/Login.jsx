@@ -5,11 +5,14 @@ import { AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthLayout from '../../layout/AuthLayout';
 import { loginDriver } from "../../services/driverAuth";
+import { useAuth } from "../../context/AuthContext";
+import { fetchDriverProfile } from "../../services/driverAuth";
 
 export default function Login() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const [searchParams] = useSearchParams();
+    const { setUser, setAuthStatus } = useAuth();
 
     const [globalError, setGlobalError] = useState('');
     const [errors, setErrors] = useState({});
@@ -38,25 +41,39 @@ export default function Login() {
     };
 
     const mutation = useMutation({
-        mutationFn: (payload) => loginDriver(payload),
-        onSuccess: (data) => {
-            toast.success("Welcome back! 👋");
-            queryClient.invalidateQueries(["userProfile"]);
+    mutationFn: (payload) => loginDriver(payload),
 
-            const role = data?.result?.user?.role;
-            if (role === "driver") {
-                navigate("/driver-dashboard");
+        onSuccess: async () => {
+            try {
+                const profile = await fetchDriverProfile();
+
+                setUser(profile);
+
+                setAuthStatus("authenticated");
+
+                toast.success("Welcome back! 👋");
+
+                navigate("/driver-dashboard", {
+                    replace: true,
+                });
+
+            } catch (err) {
+                toast.error("Failed to restore session");
             }
         },
+
         onError: (error) => {
             const responseData = error?.response?.data;
-            
-            // Handle backend field-specific errors or global message
+
             if (responseData?.errors) {
                 setErrors(responseData.errors);
             } else {
-                const message = responseData?.message || "Invalid credentials. Please try again.";
+                const message =
+                    responseData?.message ||
+                    "Invalid credentials. Please try again.";
+
                 setGlobalError(message);
+
                 toast.error(message);
             }
         },
