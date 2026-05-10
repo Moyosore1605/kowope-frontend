@@ -1,78 +1,33 @@
-import {
-	createContext,
-	useContext,
-	useEffect,
-	useState,
-} from "react";
-
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "./AuthContext";
 import { restoreSession } from "../services/restoreSession";
 import { fetchDriverProfile } from "../services/driverAuth";
 
-const AuthContext = createContext();
-
 export const AuthProvider = ({ children }) => {
-	const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null);
+    const [authStatus, setAuthStatus] = useState("booting");
 
-	const [authStatus, setAuthStatus] = useState("booting");
+    useEffect(() => {
+        const bootstrapAuth = async () => {
+        try {
+            const restored = await restoreSession();
+            if (!restored) { setAuthStatus("unauthenticated"); return; }
 
-	/*
-	booting
-	authenticated
-	unauthenticated
-	offline
-	server-error
-	*/
+            const profile = await fetchDriverProfile();
+            setUser(profile);
+            setAuthStatus("authenticated");
+        } catch (err) {
+            setAuthStatus(!navigator.onLine ? "offline" : "server-error");
+        }
+        };
+        bootstrapAuth();
+    }, []);
 
-	useEffect(() => {
-		const bootstrapAuth = async () => {
-			try {
-				// restore access token
-				const restored = await restoreSession();
-
-				if (!restored) {
-					setAuthStatus(
-						"unauthenticated"
-					);
-					return;
-				}
-
-				// fetch user profile
-				const profile = await fetchDriverProfile();
-
-				setUser(profile);
-
-				setAuthStatus(
-					"authenticated"
-				);
-
-			} catch (err) {
-
-				// offline
-				if (!navigator.onLine) {
-					setAuthStatus("offline");
-					return;
-				}
-
-				// backend unavailable
-				setAuthStatus("server-error");
-			}
-		};
-
-		bootstrapAuth();
-	}, []);
-
-	return (
-		<AuthContext.Provider
-			value={{
-				user,
-				setUser,
-				authStatus,
-				setAuthStatus,
-			}}
-		>
-			{children}
-		</AuthContext.Provider>
-	);
+    return (
+        <AuthContext.Provider value={{ user, setUser, authStatus, setAuthStatus }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => useContext(AuthContext);
