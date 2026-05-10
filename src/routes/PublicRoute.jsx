@@ -1,14 +1,34 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import {
+	Navigate,
+	Outlet,
+} from "react-router-dom";
+
+import { useAuth } from "../context/AuthContext";
 
 export default function PublicRoute() {
-	const { isAuthenticated, isLoading } = useAuth();
 
-	if (isLoading) return <div>Loading...</div>;
+	const { authStatus } = useAuth();
 
-	if (isAuthenticated) {
-		return <Navigate to="/driver-dashboard" replace />;
+	// app still restoring session
+	if (authStatus === "booting") {
+		return (
+			<div className="min-h-screen flex items-center justify-center">
+				Loading...
+			</div>
+		);
 	}
 
+	// already authenticated
+	if (authStatus === "authenticated") {
+		return (
+			<Navigate
+				to="/driver-dashboard"
+				replace
+			/>
+		);
+	}
+
+	// offline/server-error users
+	// may still access login page
 	return <Outlet />;
 }

@@ -1,14 +1,47 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-export default function ProtectedRoute() {
-	const { isAuthenticated, isLoading } = useAuth();
+export default function ProtectedRoute({
+	children,
+}) {
+	const { authStatus } = useAuth();
 
-	if (isLoading) return <div>Loading...</div>;
-
-	if (!isAuthenticated) {
-		return <Navigate to="/login" replace />;
+	// session booting
+	if (authStatus === "booting") {
+		return (
+			<div className="min-h-screen flex items-center justify-center">
+				Loading session...
+			</div>
+		);
 	}
 
-	return <Outlet />;
+	// offline
+	if (authStatus === "offline") {
+		return (
+			<div className="min-h-screen flex items-center justify-center">
+				No internet connection.
+			</div>
+		);
+	}
+
+	// backend unavailable
+	if (authStatus === "server-error") {
+		return (
+			<div className="min-h-screen flex items-center justify-center">
+				Server unavailable.
+			</div>
+		);
+	}
+
+	// not authenticated
+	if (authStatus === "unauthenticated") {
+		return (
+			<Navigate
+				to="/login"
+				replace
+			/>
+		);
+	}
+
+	return children;
 }

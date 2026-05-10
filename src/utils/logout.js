@@ -1,16 +1,20 @@
-import { queryClient } from "../services/queryClient";
+import { clearAccessToken } from "../services/tokenStore";
 
-const AUTH_ERRORS = {
-	SESSION_EXPIRED: "session-expired",
-};
+export const logout = async () => {
 
-let hasLoggedOut = false;
+	clearAccessToken();
 
-export const logout = () => {
-	if (hasLoggedOut) return;
-	hasLoggedOut = true;
+	try {
+		await fetch(
+			"https://kowope-backend-service.onrender.com/api/v1/auth/driver/logout",
+			{
+				method: "POST",
+				credentials: "include",
+			}
+		);
+	} catch {}
 
-	queryClient.clear();
-
-	window.location.replace(`/login?reason=${AUTH_ERRORS.SESSION_EXPIRED}`);
+	window.location.replace(
+		"/login?reason=session-expired"
+	);
 };

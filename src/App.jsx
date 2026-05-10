@@ -18,6 +18,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import ForgotPin from "./pages/auth/ForgotPin";
 import ChangePin from "./pages/auth/ChangePin";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
 
@@ -29,43 +30,57 @@ function App() {
 	// 		},
 	// 	},
 	// });
+	
 
   	return (
       	<BrowserRouter>
 			<QueryClientProvider client={queryClient}>
 				<DarkModeSwitcher>
-					<Toaster
-						position="top-right"
-						toastOptions={{
-						duration: 4000,
-						style: {
-							fontSize: "14px",
-						},
-						}}
-					/>
-					<Routes>
-						<Route path='/' element={<Landing />}></Route>
-						{/* <Route element={<PublicRoute />}> */}
-							<Route path="/login" element={<Login />} />
-							<Route path="/signup" element={<Signup />} />
-						{/* </Route> */}
-						<Route path='/verify-otp' element={<VerifyOtp />}></Route>
-						<Route path='/forgot-pin' element={<ForgotPin />}></Route>
-						<Route path='/change-pin' element={<ChangePin />}></Route>
-						<Route path='/driver-dashboard' element={
-							
-								<DashboardLayout />
-							
-						}>
-							<Route index element={<DriverDashboard />} />
-							<Route path="buy-ticket" element={<BuyTicketPage />} />
-							<Route path="ticket-history" element={<TicketHistoryPage />} />
-							<Route path="settings" element={<SettingsPage />} />
-						</Route>
-					</Routes>
+					<AuthProvider>
+
+						<Toaster
+							position="top-right"
+							toastOptions={{
+							duration: 4000,
+							style: {
+								fontSize: "14px",
+							},
+							}}
+						/>
+
+						<Routes>
+
+							<Route path="/" element={<Landing />} />
+
+							<Route element={<PublicRoute />}>
+								<Route path="/login" element={<Login />} />
+								<Route path="/signup" element={<Signup />} />
+							</Route>
+
+							<Route path="/verify-otp" element={<VerifyOtp />} />
+							<Route path="/forgot-pin" element={<ForgotPin />} />
+							<Route path="/change-pin" element={<ChangePin />} />
+
+							<Route
+								path="/driver-dashboard"
+								element={
+									<ProtectedRoute>
+										<DashboardLayout />
+									</ProtectedRoute>
+								}
+							>
+								<Route index element={<DriverDashboard />} />
+								<Route path="buy-ticket" element={<BuyTicketPage />} />
+								<Route path="ticket-history" element={<TicketHistoryPage />} />
+								<Route path="settings" element={<SettingsPage />} />
+							</Route>
+
+						</Routes>
+
+					</AuthProvider>
 				</DarkModeSwitcher>
 			</QueryClientProvider>
-    	</BrowserRouter>
+		</BrowserRouter>
   	)
 }
 
