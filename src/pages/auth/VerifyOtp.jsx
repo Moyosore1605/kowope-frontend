@@ -1,19 +1,22 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, UserCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthLayout from '../../layout/AuthLayout';
-import { verifyOtp, resendOtp } from "../../services/auth";
+import { config } from "./otpConfig";
+import { verifyOtp, resendOtp } from "../../services/driverAuth";
 
 export default function VerifyOtp() {
     const navigate = useNavigate();
+    const location = useLocation();
     const queryClient = useQueryClient();
 
     const [globalError, setGlobalError] = useState('');
     const [errors, setErrors] = useState({});
     const [phone, setPhone] = useState('');
     const [code, setCode] = useState(["", "", "", "", "", ""]);
+    const flow = location.state?.flow;
 
     const codeRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
 
@@ -45,9 +48,11 @@ export default function VerifyOtp() {
         mutationFn: (payload) => verifyOtp(payload),
         onSuccess: (data) => {
             toast.success("Verification successful!");
-            sessionStorage.removeItem("otp_phone");
+            if (flow === "signup") {
+                sessionStorage.removeItem("otp_phone");
+            }
             queryClient.invalidateQueries(["userProfile"]);
-            navigate("/driver-dashboard");
+            navigate(config[flow]?.successRedirect);
         },
         onError: (error) => {
             const responseData = error?.response?.data;
@@ -129,8 +134,8 @@ export default function VerifyOtp() {
                         <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center mb-4">
                             <UserCircle className="w-8 h-8 text-secondary" strokeWidth={1.5} />
                         </div>
-                        <h1 className="text-xl font-bold text-header mb-1">Verify Code</h1>
-                        <p className="text-body text-sm">Enter your 6-digit code</p>
+                        <h1 className="text-xl font-bold text-header mb-1">{config[flow]?.title || "Verify Code"}</h1>
+                        <p className="text-body text-sm">{config[flow]?.subtitle || "Enter your 6-digit code"}</p>
                     </div>
 
                     {/* Global Error Banner */}
@@ -189,8 +194,8 @@ export default function VerifyOtp() {
                                             ${errors.code
                                                 ? "border-red-400 focus:border-red-500"
                                                 : digit
-                                                    ? "border-secondary"
-                                                    : "border-gray-200 focus:border-secondary"
+                                                    ? "border-primary focus:border-primary"
+                                                    : "border-gray-200 focus:border-primary"
                                             }`}
                                     />
                                 ))}
@@ -204,10 +209,16 @@ export default function VerifyOtp() {
                         <button
                             type="submit"
                             disabled={mutation.isPending || resendMutation.isPending}
-                            className="w-full bg-secondary hover:bg-blue-700 active:bg-blue-800 cursor-pointer text-white font-semibold py-3.5 rounded-xl transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="w-full bg-primary hover:bg-primary-hover cursor-pointer text-gray-900 font-semibold py-3.5 rounded-xl transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
-                            {mutation.isPending ? "Verifying..." : "Verify and Login →"}
+                            {config[flow] === "signup" 
+                                ? 
+                                mutation.isPending ? "Verifying..." : "Verify and Login →"
+                                :
+                                mutation.isPending ? "Verifying..." : "Continue"
+                            }
                         </button>
+                        
 
                         {/* Resend link */}
                         <p className="text-center text-sm text-body">
@@ -216,7 +227,7 @@ export default function VerifyOtp() {
                                 type="button"
                                 onClick={handleResend}
                                 disabled={resendMutation.isPending}
-                                className="text-blue-500 font-medium hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
+                                className="text-secondary font-medium hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
                             >
                                 {resendMutation.isPending ? "Sending..." : "Resend code"}
                             </button>

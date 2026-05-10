@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthLayout from '../../layout/AuthLayout';
-import { loginDriver } from "../../services/auth";
+import { loginDriver } from "../../services/driverAuth";
 
 export default function Login() {
     const navigate = useNavigate();

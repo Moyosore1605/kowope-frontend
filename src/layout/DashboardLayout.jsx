@@ -7,7 +7,7 @@ import {
     Check, Clock, Share2
 } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
-import { fetchDriverProfile } from "../services/auth";
+import { fetchDriverProfile } from "../services/driverAuth";
 import { getInitials } from "../utils/getInitials";
 import { Outlet } from "react-router-dom";
 import SideBar from "../components/SideBar";

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchDriverProfile } from "../services/auth";
+import { fetchDriverProfile } from "../services/driverAuth";
 
 export const useAuth = () => {
 	const query = useQuery({

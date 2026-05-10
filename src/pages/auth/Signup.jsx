@@ -4,7 +4,7 @@ import { AlertCircle } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import AuthLayout from '../../layout/AuthLayout';
-import { registerDriver } from "../../services/auth";
+import { registerDriver } from "../../services/driverAuth";
 
 export default function Signup() {
     const navigate = useNavigate();
@@ -100,7 +100,7 @@ export default function Signup() {
             toast.success(`Registration successful 🎉\nRegistered driver otp: ${data.otp}`);
             sessionStorage.setItem("otp_phone", phone);
             if (data.user.role === "driver") {
-                navigate("/verify-otp");
+                navigate("/verify-otp", { state: { flow: "signup" } });
             }
             console.log("Registered driver otp:", data.otp);
         },

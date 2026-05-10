@@ -16,6 +16,8 @@ import VerifyOtp from './pages/auth/VerifyOtp';
 import { queryClient } from "./services/queryClient";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
+import ForgotPin from "./pages/auth/ForgotPin";
+import ChangePin from "./pages/auth/ChangePin";
 
 function App() {
 
@@ -48,6 +50,8 @@ function App() {
 							<Route path="/signup" element={<Signup />} />
 						{/* </Route> */}
 						<Route path='/verify-otp' element={<VerifyOtp />}></Route>
+						<Route path='/forgot-pin' element={<ForgotPin />}></Route>
+						<Route path='/change-pin' element={<ChangePin />}></Route>
 						<Route path='/driver-dashboard' element={
 							
 								<DashboardLayout />

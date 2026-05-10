@@ -1,9 +1,17 @@
 import { logout } from "../utils/logout";
+import {
+	getAccessToken,
+	setAccessToken,
+	clearAccessToken,
+} from "./tokenStore";
 
 const BASE_URL = "https://kowope-backend-service.onrender.com";
 
 let refreshPromise = null;
 
+/**
+ * Refresh access token using HttpOnly refresh cookie
+ */
 export const refreshAccessToken = async () => {
 	const res = await fetch(
 		`${BASE_URL}/api/v1/auth/token/refresh`,
@@ -17,49 +25,83 @@ export const refreshAccessToken = async () => {
 		throw new Error("Refresh failed");
 	}
 
-	return res.json();
+	const data = await res.json();
+
+	if (!data?.access_token) {
+		throw new Error("No access token returned");
+	}
+
+	setAccessToken(data.access_token);
+
+	return data.access_token;
 };
 
-export const fetchWithAuth = async (url, options = {}) => {
+/**
+ * Main authenticated fetch wrapper
+ */
+export const fetchWithAuth = async (
+	url,
+	options = {}
+) => {
+	const token = getAccessToken();
+
+	const headers = {
+		...(options.headers || {}),
+	};
+
+	// attach access token
+	if (token) {
+		headers.Authorization = `Bearer ${token}`;
+	}
+
 	let res = await fetch(url, {
 		...options,
+		headers,
 		credentials: "include",
 	});
 
-	// 🔁 Handle expired access token
+	// access token expired
 	if (res.status === 401) {
 		try {
-			// ensure only ONE refresh happens globally
+			// only ONE refresh request globally
 			if (!refreshPromise) {
 				refreshPromise = refreshAccessToken().finally(() => {
 					refreshPromise = null;
 				});
 			}
 
-			await refreshPromise;
+			const newAccessToken = await refreshPromise;
 
-			// retry request once
+			// retry original request
 			res = await fetch(url, {
 				...options,
+				headers: {
+					...(options.headers || {}),
+					Authorization: `Bearer ${newAccessToken}`,
+				},
 				credentials: "include",
 			});
 
-			// ❌ still unauthorized after refresh → session is dead
+			// refresh failed logically
 			if (res.status === 401) {
+				clearAccessToken();
 				logout();
 				throw new Error("AUTH_EXPIRED");
 			}
 
 		} catch (err) {
+			clearAccessToken();
 			logout();
 			throw new Error("AUTH_EXPIRED");
 		}
 	}
 
-	// ❌ other errors
 	if (!res.ok) {
 		const data = await res.json().catch(() => ({}));
-		throw new Error(data.message || "REQUEST_FAILED");
+
+		throw new Error(
+			data.message || "REQUEST_FAILED"
+		);
 	}
 
 	return res.json();

@@ -1,4 +1,5 @@
 import { fetchWithAuth } from "./fetchWithAuth";
+import { setAccessToken } from "./tokenStore";
 
 const BASE_URL = "https://kowope-backend-service.onrender.com"
 
@@ -24,24 +25,28 @@ export const registerDriver = async (payload) => {
 };
 
 export const loginDriver = async (payload) => {
-    const res = await fetch(
-        `${BASE_URL}/api/v1/auth/driver/login`,
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-        }
-    );
+	const res = await fetch(
+		`${BASE_URL}/api/v1/auth/driver/login`,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(payload),
+			credentials: "include",
+		}
+	);
 
-    const data = await res.json();
+	const data = await res.json();
 
-    if (!res.ok) {
-        const error = new Error(data.message || "Login failed");
-        error.response = { data };
-        throw error;
-    }
+	if (!res.ok) {
+		throw new Error(data.message);
+	}
 
-    return data;
+	// store access token in memory
+	setAccessToken(data.result.access_token);
+
+	return data;
 };
 
 export const verifyOtp = async (payload) => {
@@ -86,19 +91,19 @@ export const resendOtp = async (payload) => {
     return data;
 };
 
-//export const fetchDriverProfile = () => {
-	//return fetchWithAuth(
-	 	//`${BASE_URL}/api/v1/auth/driver/me`
-	//);
-//};
-
-export const fetchDriverProfile = async () => { 
-	const res = await fetch( 
-		`${BASE_URL}/api/v1/auth/driver/me`,
-	{ method: "GET", 
-	 credentials: "include", } ); 
-	
-	if (!res.ok) { 
-		throw new Error("Failed to fetch profile"); 
-	} return res.json(); 
+export const fetchDriverProfile = async () => {
+	return fetchWithAuth(
+		`${BASE_URL}/api/v1/auth/driver/me`
+	);
 };
+
+// export const fetchDriverProfile = async () => { 
+// 	const res = await fetch( 
+// 		`${BASE_URL}/api/v1/auth/driver/me`,
+// 	{ method: "GET", 
+// 	 credentials: "include", } ); 
+	
+// 	if (!res.ok) { 
+// 		throw new Error("Failed to fetch profile"); 
+// 	} return res.json(); 
+// };

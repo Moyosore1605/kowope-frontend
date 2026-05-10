@@ -18,6 +18,12 @@ const paymentMethods = [
 	{ id: "transfer", label: "Transfer", Icon: ArrowRightLeft },
 ];
 
+const steps = [
+	{ label: "Ticket details", status: "complete" },
+	{ label: "Payment", status: "current" },
+	{ label: "Confirm", status: "upcoming" },
+];
+
 function SummaryRow({ label, value, valueClass = "", dk }) {
   return (
     <div className={`flex justify-between items-center py-3 border-b ${dk ? 'border-gray-800' : 'border-gray-100'}`}>
@@ -30,10 +36,10 @@ function SummaryRow({ label, value, valueClass = "", dk }) {
 function ReviewRow({ label, value, muted = false, dk }) {
 	return (
 		<div className={`flex justify-between items-center py-2.5 border-b last:border-0 ${dk ? "border-gray-800" : "border-gray-100"}`}>
-			<span className={`text-xs ${dk ? "text-gray-500" : "text-gray-400"}`}>{label}</span>
-			<span className={`text-xs font-medium ${muted
+			<span className={`text-[11px] tracking-wide ${dk ? "text-gray-500" : "text-gray-400"}`}>{label}</span>
+			<span className={`text-xs tracking-wide font-semibold ${muted
 				? dk ? "text-gray-500" : "text-gray-300"
-				: dk ? "text-white" : "text-gray-900"}`}>
+				: dk ? "text-white" : "text-[#010214]"}`}>
 				{value}
 			</span>
 		</div>
@@ -47,20 +53,20 @@ function BuyTicketPage() {
 
 	const dk = darkMode;
 
-	const card = `rounded-2xl border p-6 ${dk
+	const card = `rounded-2xl border p-6 transition-all hover:shadow-md ${dk
 		? "bg-gray-900 border-gray-800"
 		: "bg-white border-gray-100 shadow-sm"}`;
 
 	const handlePay = () => {
 		// Replace with your payment API call — call setPaid(true) on success
 		setPaid(true);
-		onSuccess?.();
+		// onSuccess?.();
 	};
 
 	// ── Success state ──
 	if (paid) {
 		return (
-		<div className="p-6">
+		<div className="p-4 sm:p-6">
 			<div className={`${card} flex flex-col items-center justify-center text-center gap-4 py-16`}>
 			<div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center">
 				<Check size={26} className="text-green-500" strokeWidth={2.5} />
@@ -105,33 +111,60 @@ function BuyTicketPage() {
 					Purchase your daily operating ticket
 				</p>
 			</div>
-			<div className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border shrink-0 mt-1
-			bg-green-50 border-green-200 text-green-600">
-				<ShieldCheck size={13} />
-				Secure payment
-			</div>
 		</div>
 
 		{/* Step indicators */}
 		<div className="flex items-center gap-2 mb-8">
-			{["Ticket details", "Payment", "Confirm"].map((label, i) => (
-			<div key={label} className="flex items-center gap-2">
-				{i > 0 && <div className={`w-6 h-px ${dk ? "bg-gray-700" : "bg-gray-200"}`} />}
+			{steps.map((step, i) => (
+				<div key={step.label} className="flex items-center gap-2">
+					{i > 0 && (
+						<div
+							className={`w-8 h-px ${
+								step.status === "upcoming"
+									? dk
+										? "bg-gray-700"
+										: "bg-gray-200"
+									: "bg-primary"
+							}`}
+						/>
+					)}
+
 				<div className="flex items-center gap-2">
-					<div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium
-						${i < 2
-						? "bg-yellow-400 text-gray-900"
-						: dk ? "border border-gray-700 text-gray-500" : "border border-gray-200 text-gray-400"}`}>
-						{i + 1}
+					<div
+						className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-all
+						${
+							step.status === "complete"
+								? "bg-green-500 text-white"
+								: step.status === "current"
+								? "bg-primary text-gray-900"
+								: dk
+								? "border border-gray-700 text-gray-500"
+								: "border border-gray-200 text-gray-400"
+						}`}
+					>
+						{step.status === "complete" ? (
+							<Check size={12} strokeWidth={3} />
+						) : (
+							i + 1
+						)}
 					</div>
-					<span className={`text-xs font-medium ${i < 2
-						? dk ? "text-white" : "text-gray-800"
-						: dk ? "text-gray-500" : "text-gray-400"}`}>
-						{label}
+
+					<span
+						className={`text-xs font-medium ${
+							step.status === "upcoming"
+								? dk
+									? "text-gray-500"
+									: "text-gray-400"
+								: dk
+								? "text-white"
+								: "text-gray-800"
+						}`}
+					>
+						{step.label}
 					</span>
 				</div>
 			</div>
-			))}
+		))}
 		</div>
 
 		<div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -144,17 +177,30 @@ function BuyTicketPage() {
 				<h2 className={`text-base font-bold mb-4 ${dk ? 'text-white' : 'text-gray-900'}`}>
 					Ticket Summary
 				</h2>
+				<div className="mb-5">
+					<p className={`text-xs uppercase tracking-wide mb-1 ${dk ? 'text-gray-500' : 'text-gray-400'}`}>
+						Amount payable
+					</p>
+
+					<h3 className={`text-3xl font-bold tracking-tight ${dk ? 'text-white' : 'text-gray-900'}`}>
+						{ticketDetails.amount}
+					</h3>
+
+					<p className={`text-xs mt-1 ${dk ? 'text-gray-500' : 'text-gray-400'}`}>
+						No extra charges applied
+					</p>
+				</div>
 				<div className={`rounded-xl p-4 mb-5 ${dk ? 'bg-gray-800' : 'bg-gray-50'}`}>
 					<SummaryRow label="Ticket Type" value={ticketDetails.type} dk={dk} />
 					<SummaryRow label="Operating Zone" value={ticketDetails.zone} dk={dk} />
 					<SummaryRow label="Route" value={ticketDetails.route} dk={dk} />
-					<SummaryRow label="Valid For" value="Today Only" valueClass="text-green-500" dk={dk} />
-					<div className="flex justify-between items-center pt-3 mt-1">
+					<SummaryRow label="Valid For" value="Until 11:59 PM" valueClass="text-green-500" dk={dk} />
+					{/* <div className="flex justify-between items-center pt-3 mt-1">
 						<span className="text-sm text-gray-400">Amount</span>
-						<span className={`text-lg font-bold ${dk ? 'text-white' : 'text-gray-900'}`}>
+						<span className={`text-3xl font-bold tracking-tight ${dk ? 'text-white' : 'text-gray-900'}`}>
 							{ticketDetails.amount}
 						</span>
-					</div>
+					</div> */}
 				</div>
 			</div>
 
@@ -164,6 +210,16 @@ function BuyTicketPage() {
 					Payment Method
 				</h3>
 
+				<div className={`flex items-center gap-2 text-xs font-medium mb-4 px-3 py-2 rounded-lg
+					${dk
+						? "bg-green-500/10 border border-green-500/20 text-green-400"
+						: "bg-green-50 border border-green-100 text-green-600"
+					}`}
+				>
+					<ShieldCheck size={14} />
+					Secure one-time payment
+				</div>
+
 				<div className="grid grid-cols-3 gap-3 mb-6">
 				{paymentMethods.map(({ id, label, Icon }) => {
 					const selected = paymentMethod === id;
@@ -171,15 +227,15 @@ function BuyTicketPage() {
 						<button
 							key={id}
 							onClick={() => setPaymentMethod(id)}
-							className={`flex flex-col items-center gap-2 p-4 rounded-xl border text-sm font-medium transition-all
+							className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-sm font-medium transition-all
 							${selected
-								? "border-yellow-400 bg-yellow-50 text-yellow-800"
+								? "border-primary bg-primary/10 text-primary"
 								: dk
 								? "border-gray-700 text-gray-400 hover:border-gray-600"
 								: "border-gray-100 text-gray-500 hover:border-gray-200"
 							}`}>
 							<div className={`w-8 h-8 rounded-lg flex items-center justify-center
-							${selected ? "bg-yellow-400" : dk ? "bg-gray-800" : "bg-gray-100"}`}>
+							${selected ? "bg-primary" : dk ? "bg-gray-800" : "bg-gray-100"}`}>
 								<Icon size={15} className={selected ? "text-gray-900" : ""} />
 							</div>
 							<span className="text-xs">{label}</span>
@@ -190,7 +246,7 @@ function BuyTicketPage() {
 
 				<button
 					onClick={handlePay}
-					className="w-full py-3.5 rounded-xl text-sm font-semibold bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-500 text-gray-900 transition-all">
+					className="w-full py-3.5 rounded-xl text-sm font-semibold bg-primary hover:bg-primary/90 active:bg-primary/80 text-gray-900 transition-all">
 					Pay {ticketDetails.amount}
 				</button>
 			</div>
@@ -217,7 +273,7 @@ function BuyTicketPage() {
 				<ReviewRow label="Vehicle" value={ticketDetails?.vehicle ?? '—'} dk={dk} />
 				<ReviewRow label="Zone" value={ticketDetails?.zone ?? '—'} dk={dk} />
 				<ReviewRow label="Route" value={ticketDetails?.route ?? '—'} dk={dk} />
-				<ReviewRow label="Valid Until" value="—" dk={dk} />
+				<ReviewRow label="Valid Until" value="11:59 PM" dk={dk} />
 			</div>
 
 			{/* Info box */}
@@ -227,8 +283,8 @@ function BuyTicketPage() {
 				<ul className="space-y-1">
 				{[
 					'Pay to activate your ticket',
-					'QR codes appears instantly',
-					'Valid for today only',
+					'QR code generates instantly after payment',
+					'Ticket expires at 11:59 PM',
 				].map((item, i) => (
 					<li key={i} className={`text-xs ${dk ? 'text-yellow-300' : 'text-yellow-700'}`}>
 					· {item}
