@@ -1,11 +1,9 @@
 import { useState } from "react";
 import {Sun, Moon, Car, X, LogOut} from 'lucide-react';
 import NavItem from './NavItem';
-import LogoutModal from "./LogoutModal";
 import KowopeDashboardLogo from '../assets/kowopeDashboardLogo-removebg-preview.png';
 
-export default function SideBar({ sidebarOpen, setSidebarOpen, activeNav, sidebar, navItems, setActiveNav, dk, setDarkMode }) {
-    const [logoutOpen, setLogoutOpen] = useState(false);
+export default function SideBar({ sidebarOpen, setSidebarOpen, activeNav, sidebar, navItems, setActiveNav, dk, setDarkMode, setLogoutOpen }) {
 
     return (
         <div className={`fixed top-0 left-0 z-50 w-64 h-screen border-r flex flex-col transform transition-transform duration-300
@@ -38,7 +36,8 @@ export default function SideBar({ sidebarOpen, setSidebarOpen, activeNav, sideba
                     setActiveNav={setActiveNav} 
                     setSidebarOpen={setSidebarOpen} 
                     activeNav={activeNav} 
-                    dk={dk} />
+                    dk={dk} 
+                />
             ))}
             </div>
 
@@ -80,7 +79,6 @@ export default function SideBar({ sidebarOpen, setSidebarOpen, activeNav, sideba
                     Log out
                 </button>
             </div>
-            <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
         </div>
     )
 }

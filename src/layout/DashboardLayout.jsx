@@ -13,6 +13,7 @@ import { Outlet } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import NotifPanel from "../components/NotifPanel";
 import { DarkModeContext } from "../context/DarkModeState";
+import LogoutModal from "../components/LogoutModal";
 
 const notifications = [
     { id: 1, type: 'success', message: "Your ticket for today has been successfully purchased. You're cleared to operate.", unread: true },
@@ -45,6 +46,7 @@ export default function DashboardLayout() {
     const [notifOpen, setNotifOpen] = useState(false);
     const { darkMode, setDarkMode } = useContext(DarkModeContext);
     const [activeNav, setActiveNav] = useState("Dashboard");
+    const [logoutOpen, setLogoutOpen] = useState(false);
 
     const { data, isLoading, error } = useQuery({
 		queryKey: ["driverProfile"],
@@ -63,7 +65,16 @@ export default function DashboardLayout() {
     return (
         <div className={`flex h-screen overflow-hidden transition-colors duration-200 ${dk ? 'bg-gray-950 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
             {/* ── Sidebar ── */}
-            <SideBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} activeNav={activeNav} setActiveNav={setActiveNav} dk={dk} sidebar={sidebar} navItems={navItems} setDarkMode={setDarkMode} />
+            <SideBar 
+                sidebarOpen={sidebarOpen} 
+                setSidebarOpen={setSidebarOpen} 
+                activeNav={activeNav} 
+                setActiveNav={setActiveNav} 
+                dk={dk} sidebar={sidebar} 
+                navItems={navItems} 
+                setDarkMode={setDarkMode}
+                setLogoutOpen={setLogoutOpen}
+            />
 
             {sidebarOpen && (
                 <div className="fixed inset-0 bg-black/40 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
@@ -138,7 +149,18 @@ export default function DashboardLayout() {
         {/* Notif overlay */}
         {notifOpen && <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setNotifOpen(false)} />}
         {/* Notif panel */}
-        <NotifPanel notifications={notifications} dk={dk} notifOpen={notifOpen} setNotifOpen={setNotifOpen} notifPanel={notifPanel} unreadCount={unreadCount} notifIcon={notifIcon} />
+        <NotifPanel
+            notifications={notifications} 
+            dk={dk} notifOpen={notifOpen} 
+            setNotifOpen={setNotifOpen} 
+            notifPanel={notifPanel} 
+            unreadCount={unreadCount} 
+            notifIcon={notifIcon} 
+        />
+        <LogoutModal 
+            isOpen={logoutOpen} 
+            onClose={() => setLogoutOpen(false)} 
+        />
     </div>
   );
 }
