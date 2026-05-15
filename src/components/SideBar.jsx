@@ -79,9 +79,8 @@ export default function SideBar({ sidebarOpen, setSidebarOpen, activeNav, sideba
                     <LogOut size={18} />
                     Log out
                 </button>
-
-                <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
             </div>
+            <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
         </div>
     )
 }
