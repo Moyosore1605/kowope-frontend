@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { LogOut, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../utils/logout";
 import { DarkModeContext } from "../context/DarkModeState";
 
 export default function LogoutModal({ isOpen, onClose }) {
@@ -13,6 +14,7 @@ export default function LogoutModal({ isOpen, onClose }) {
         try {
             // Clear your auth tokens / context here e.g:
             // logout(); clearTokens(); queryClient.clear();
+            await logout();
             navigate("/login");
         } catch (error) {
             console.error("Logout failed:", error);
