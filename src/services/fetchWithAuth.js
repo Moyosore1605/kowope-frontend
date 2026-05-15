@@ -91,10 +91,32 @@ export const fetchWithAuth = async (
 			}
 
 		} catch (err) {
-			clearAccessToken();
-			logout();
-			throw new Error("AUTH_EXPIRED");
+			if (err.code === "SESSION_EXPIRED") {
+				clearAccessToken();
+				logout();
+			}
+
+			throw err;
 		}
+	}
+
+	if (res.status === 429) {
+		const data = await res.json().catch(() => ({}));
+
+		const retryAfter =
+			res.headers.get("Retry-After");
+
+		const message =
+			data?.message ||
+			(retryAfter
+				? `Too many requests. Try again in ${retryAfter} seconds.`
+				: "Too many requests. Please slow down.");
+
+		const err = new Error(message);
+
+		err.code = "RATE_LIMITED";
+
+		throw err;
 	}
 
 	if (!res.ok) {

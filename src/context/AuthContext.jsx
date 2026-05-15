@@ -17,7 +17,18 @@ export const AuthProvider = ({ children }) => {
                 setUser(profile);
                 setAuthStatus("authenticated");
             } catch (err) {
-                setAuthStatus(!navigator.onLine ? "offline" : "server-error");
+
+                if (err.code === "RATE_LIMITED") {
+                    setAuthStatus("server-error");
+                    return;
+                }
+
+                if (!navigator.onLine) {
+                    setAuthStatus("offline");
+                    return;
+                }
+
+                setAuthStatus("server-error");
             }
         };
         bootstrapAuth();
