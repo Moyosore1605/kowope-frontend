@@ -18,7 +18,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import ForgotPin from "./pages/auth/ForgotPin";
 import ChangePin from "./pages/auth/ChangePin";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 function App() {
 

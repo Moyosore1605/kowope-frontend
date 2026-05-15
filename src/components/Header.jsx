@@ -44,8 +44,9 @@ export default function Header() {
 
                 {/* Desktop nav links */}
                 <nav className="hidden md:flex gap-8 items-center">
-                    {navLinks.map((link) => (
+                    {navLinks.map((link, index) => (
                         <a
+                            key={index}
                             href={link.to}
                             className="text-black font-semibold text-sm hover:text-[#3B5BDB] transition-colors duration-150"
                         >
@@ -92,8 +93,9 @@ export default function Header() {
                     }`}
             >
                 <nav className="flex flex-col gap-1 pt-2 border-t border-gray-100">
-                    {navLinks.map((link) => (
+                    {navLinks.map((link, index) => (
                         <a
+                            key={index}
                             onClick={closeMobile}
                             className="text-gray-800 font-semibold text-sm px-3 py-3 rounded-lg hover:bg-[#EEF4FF] hover:text-[#3B5BDB] transition-colors duration-150"
                             href={link.to}

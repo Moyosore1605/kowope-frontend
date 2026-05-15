@@ -5,7 +5,7 @@ import { AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthLayout from '../../layout/AuthLayout';
 import { loginDriver } from "../../services/driverAuth";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { fetchDriverProfile } from "../../services/driverAuth";
 
 export default function Login() {
