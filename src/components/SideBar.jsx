@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {Sun, Moon, Car, X, LogOut} from 'lucide-react';
 import NavItem from './NavItem';
 import LogoutModal from "./LogoutModal";
