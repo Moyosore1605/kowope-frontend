@@ -1,22 +1,24 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { AlertCircle, UserCircle } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext.jsx";
 import AuthLayout from '../../layout/AuthLayout';
 import { config } from "./otpConfig";
 import { verifyOtp, resendOtp } from "../../services/driverAuth";
+import { fetchDriverProfile } from "../../services/driverAuth";
 
 export default function VerifyOtp() {
     const navigate = useNavigate();
     const location = useLocation();
-    const queryClient = useQueryClient();
+    const { setUser, setAuthStatus } = useAuth();
 
     const [globalError, setGlobalError] = useState('');
     const [errors, setErrors] = useState({});
     const [phone, setPhone] = useState('');
     const [code, setCode] = useState(["", "", "", "", "", ""]);
-    const flow = location.state?.flow;
+    const realFlow = location.state?.flow;
 
     const codeRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
 
@@ -46,21 +48,53 @@ export default function VerifyOtp() {
     // Mutation for verifying the OTP
     const mutation = useMutation({
         mutationFn: (payload) => verifyOtp(payload),
-        onSuccess: (data) => {
-            toast.success("Verification successful!");
-            if (flow === "signup") {
+
+        onSuccess: async () => {
+
+            if (realFlow === "signup") {
+
                 sessionStorage.removeItem("otp_phone");
+
+                const profile = await fetchDriverProfile();
+
+                setUser(profile);
+
+                setAuthStatus("authenticated");
+
+                toast.success("Welcome back! 👋");
+
+                navigate(
+                    config[realFlow]?.successRedirect ||
+                    "/driver-dashboard",
+                    { replace: true }
+                );
+
+            } else if (realFlow === "forgot-pin") {
+
+                toast.success("Verification successful!");
+
+                navigate(
+                    config[realFlow]?.successRedirect ||
+                    "/change-pin"
+                );
             }
-            queryClient.invalidateQueries(["userProfile"]);
-            navigate(config[flow]?.successRedirect);
         },
+
         onError: (error) => {
             const responseData = error?.response?.data;
+
             if (responseData?.errors) {
+
                 setErrors(responseData.errors);
+
             } else {
-                const message = responseData?.message || "Invalid code. Please try again.";
+
+                const message =
+                    responseData?.message ||
+                    "Invalid code. Please try again.";
+
                 setGlobalError(message);
+
                 toast.error(message);
             }
         },
@@ -134,8 +168,8 @@ export default function VerifyOtp() {
                         <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center mb-4">
                             <UserCircle className="w-8 h-8 text-secondary" strokeWidth={1.5} />
                         </div>
-                        <h1 className="text-xl font-bold text-header mb-1">{config[flow]?.title || "Verify Code"}</h1>
-                        <p className="text-body text-sm">{config[flow]?.subtitle || "Enter your 6-digit code"}</p>
+                        <h1 className="text-xl font-bold text-header mb-1">{config[realFlow]?.title || "Verify Code"}</h1>
+                        <p className="text-body text-sm">{config[realFlow]?.subtitle || "Enter your 6-digit code"}</p>
                     </div>
 
                     {/* Global Error Banner */}
@@ -184,7 +218,7 @@ export default function VerifyOtp() {
                                     <input
                                         key={i}
                                         ref={codeRefs[i]}
-                                        type="password"
+                                        type="text"
                                         inputMode="numeric"
                                         maxLength={1}
                                         value={digit}
@@ -211,7 +245,7 @@ export default function VerifyOtp() {
                             disabled={mutation.isPending || resendMutation.isPending}
                             className="w-full bg-primary hover:bg-primary-hover cursor-pointer text-gray-900 font-semibold py-3.5 rounded-xl transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
-                            {config[flow] === "signup" 
+                            {config[realFlow] === "signup" 
                                 ? 
                                 mutation.isPending ? "Verifying..." : "Verify and Login →"
                                 :

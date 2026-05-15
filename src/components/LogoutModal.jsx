@@ -1,87 +1,120 @@
 import { useContext, useState } from "react";
 import { LogOut, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { logout } from "../utils/logout";
 import { DarkModeContext } from "../context/DarkModeState";
 
 export default function LogoutModal({ isOpen, onClose }) {
-    const { darkMode: dk } = useContext(DarkModeContext);
-    const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);
+	const { darkMode: dk } = useContext(DarkModeContext);
 
-    const handleLogout = async () => {
-        setIsLoading(true);
-        try {
-            // Clear your auth tokens / context here e.g:
-            // logout(); clearTokens(); queryClient.clear();
-            await logout();
-            navigate("/login");
-        } catch (error) {
-            console.error("Logout failed:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+	const [isLoading, setIsLoading] = useState(false);
 
-    if (!isOpen) return null;
+	const handleLogout = async () => {
+		try {
+			setIsLoading(true);
 
-    return (
-        <>
-            {/* Backdrop */}
-            <div
-                className="fixed inset-0 bg-black/40 z-50 transition-opacity"
-                onClick={onClose}
-            />
+			await logout();
 
-            {/* Modal */}
-            <div className={`fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                w-full max-w-sm rounded-2xl shadow-xl border p-6 transition-colors
-                ${dk ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}`}>
+		} catch (err) {
+			console.error("Logout failed:", err);
+			setIsLoading(false);
+		}
+	};
 
-                {/* Close button */}
-                <button
-                    onClick={onClose}
-                    className={`absolute top-4 right-4 p-1.5 rounded-lg transition-colors
-                        ${dk ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-400 hover:bg-gray-100'}`}>
-                    <X size={16} />
-                </button>
+	if (!isOpen) return null;
 
-                {/* Icon */}
-                <div className="flex flex-col items-center text-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center">
-                        <LogOut size={24} className="text-red-500" strokeWidth={1.8} />
-                    </div>
+	return (
+		<>
+			{/* Backdrop */}
+			<div
+				className="fixed inset-0 bg-black/40 z-50 transition-opacity"
+				onClick={onClose}
+			/>
 
-                    {/* Text */}
-                    <div>
-                        <h2 className={`text-lg font-bold mb-1 ${dk ? 'text-white' : 'text-gray-900'}`}>
-                            Log out
-                        </h2>
-                        <p className={`text-sm ${dk ? 'text-gray-400' : 'text-gray-500'}`}>
-                            Are you sure you want to log out of your account?
-                        </p>
-                    </div>
+			{/* Modal */}
+			<div
+				className={`fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                w-full max-w-sm rounded-2xl shadow-xl border p-6 mx-4 transition-colors
+                ${
+					dk
+						? "bg-gray-900 border-gray-800"
+						: "bg-white border-gray-100"
+				}`}
+			>
+				{/* Close button */}
+				<button
+					onClick={onClose}
+					className={`absolute top-4 right-4 p-1.5 rounded-lg transition-colors
+                        ${
+							dk
+								? "text-gray-400 hover:bg-gray-800"
+								: "text-gray-400 hover:bg-gray-100"
+						}`}
+				>
+					<X
+						size={16}
+					/>
+				</button>
 
-                    {/* Buttons */}
-                    <div className="flex gap-3 w-full mt-2">
-                        <button
-                            onClick={onClose}
-                            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-all
-                                ${dk
-                                    ? 'border-gray-700 text-gray-300 hover:bg-gray-800'
-                                    : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}>
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleLogout}
-                            disabled={isLoading}
-                            className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-red-500 hover:bg-red-600 active:bg-red-700 text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                            {isLoading ? "Logging out..." : "Yes, log out"}
-                        </button>
-                    </div>
-                </div>
+				{/* Icon */}
+				<div className="flex flex-col items-center text-center gap-4">
+					<div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center">
+						<LogOut
+							size={24}
+							className="text-red-500"
+							strokeWidth={1.8}
+						/>
+					</div>
 
-            </div>
-        </>
-    );
+					{/* Text */}
+					<div>
+						<h2
+							className={`text-lg font-bold mb-1 ${
+								dk
+									? "text-white"
+									: "text-gray-900"
+							}`}
+						>
+							Log out
+						</h2>
+
+						<p
+							className={`text-sm ${
+								dk
+									? "text-gray-400"
+									: "text-gray-500"
+							}`}
+						>
+							Are you sure you want to log out of your account?
+						</p>
+					</div>
+
+					{/* Buttons */}
+					<div className="flex gap-3 w-full mt-2">
+						<button
+							onClick={onClose}
+							disabled={isLoading}
+							className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-all
+                                ${
+									dk
+										? "border-gray-700 text-gray-300 hover:bg-gray-800"
+										: "border-gray-200 text-gray-700 hover:bg-gray-50"
+								}`}
+						>
+							Cancel
+						</button>
+
+						<button
+							onClick={handleLogout}
+							disabled={isLoading}
+							className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-red-500 hover:bg-red-600 active:bg-red-700 text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+						>
+							{isLoading
+								? "Logging out..."
+								: "Yes, log out"}
+						</button>
+					</div>
+				</div>
+			</div>
+		</>
+	);
 }
