@@ -19,6 +19,7 @@ import PublicRoute from "./routes/PublicRoute";
 import ForgotPin from "./pages/auth/ForgotPin";
 import ChangePin from "./pages/auth/ChangePin";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import DriverDashboardSkeleton from "./components/Driver/DriverDashboardSkeleton.jsx";
 
 function App() {
 
@@ -60,6 +61,7 @@ function App() {
 							<Route path="/verify-otp" element={<VerifyOtp />} />
 							<Route path="/forgot-pin" element={<ForgotPin />} />
 							<Route path="/change-pin" element={<ChangePin />} />
+							<Route path="/driver-dashboard/skeleton" element={<DriverDashboardSkeleton />} />
 
 							<Route
 								path="/driver-dashboard"

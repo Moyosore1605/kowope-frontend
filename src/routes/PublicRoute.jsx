@@ -9,14 +9,12 @@ export default function PublicRoute() {
 
 	const { authStatus } = useAuth();
 
-	// app still restoring session
 	if (authStatus === "booting") {
 		return (
 			<DriverDashboardSkeleton />
 		);
 	}
 
-	// already authenticated
 	if (authStatus === "authenticated") {
 		return (
 			<Navigate

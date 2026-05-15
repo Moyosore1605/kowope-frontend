@@ -1,8 +1,11 @@
 import {Sun, Moon, Car, X, LogOut} from 'lucide-react';
 import NavItem from './NavItem';
+import LogoutModal from "./LogoutModal";
 import KowopeDashboardLogo from '../assets/kowopeDashboardLogo-removebg-preview.png';
 
 export default function SideBar({ sidebarOpen, setSidebarOpen, activeNav, sidebar, navItems, setActiveNav, dk, setDarkMode }) {
+    const [logoutOpen, setLogoutOpen] = useState(false);
+
     return (
         <div className={`fixed top-0 left-0 z-50 w-64 h-screen border-r flex flex-col transform transition-transform duration-300
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 ${sidebar}`}>
@@ -67,11 +70,16 @@ export default function SideBar({ sidebarOpen, setSidebarOpen, activeNav, sideba
                 </button>
 
                 {/* Logout */}
-                <button className={`flex items-center w-full px-4 py-2.5 rounded-xl text-sm font-medium gap-3 transition-all
-                    ${dk ? 'text-gray-400 hover:bg-gray-800 hover:text-red-400' : 'text-gray-700 hover:bg-red-50 hover:text-red-500'}`}>
+                <button 
+                    onClick={() => setLogoutOpen(true)}
+                    className={`flex items-center w-full px-4 py-2.5 rounded-xl text-sm font-medium gap-3 transition-all
+                        ${dk ? 'text-gray-400 hover:bg-gray-800 hover:text-red-400' : 'text-gray-700 hover:bg-red-50 hover:text-red-500'}`}
+                >
                     <LogOut size={18} />
                     Log out
                 </button>
+
+                <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
             </div>
         </div>
     )

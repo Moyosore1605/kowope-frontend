@@ -5,12 +5,31 @@ function DriverDashboardSkeleton() {
   const { darkMode } = useContext(DarkModeContext);
   const dk = darkMode;
 
+  const headerCls = dk ? "bg-gray-900 border-gray-800" : "bg-white border-gray-100";
   const base = dk ? "bg-gray-800" : "bg-gray-200";
   const card = dk ? "bg-gray-900 border-gray-800" : "bg-white border-gray-100";
   const shimmer = `animate-pulse rounded-lg ${base}`;
 
 	return (
 		<div className="flex-1 p-6">
+			<header className={`flex justify-between items-center ${headerCls}`}>
+				<div className="flex items-center gap-3 flex-1 max-w-md">
+					
+				</div>
+
+				<div className="flex items-center gap-3">
+
+					<div className="flex items-center gap-2 cursor-pointer">
+						
+						<div className={`w-9 h-9 rounded-full animate-pulse ${dk ? 'bg-gray-700' : 'bg-gray-200'}`} />
+						<div className="hidden md:flex flex-col gap-1.5">
+							<div className={`h-3 w-24 rounded-lg animate-pulse ${dk ? 'bg-gray-700' : 'bg-gray-200'}`} />
+							<div className={`h-2.5 w-12 rounded-lg animate-pulse ${dk ? 'bg-gray-800' : 'bg-gray-100'}`} />
+						</div>
+							
+					</div>
+				</div>
+			</header>
 
 			{/* Greeting */}
 			<div className="mb-8">

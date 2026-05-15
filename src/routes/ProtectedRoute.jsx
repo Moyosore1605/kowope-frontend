@@ -3,105 +3,73 @@ import { useAuth } from "../context/AuthContext.jsx";
 import DriverDashboardSkeleton from "../components/Driver/DriverDashboardSkeleton.jsx";
 import KowopeDashboardLogo from '../assets/kowopeDashboardLogo-removebg-preview.png';
 
-const Spinner = () => (
-	<>
-		<style>{`@keyframes kw-spin { to { transform: rotate(360deg); } }`}</style>
-		<div style={{
-			width: 40, height: 40,
-			border: "3px solid #fde9b8",
-			borderTopColor: "#F5A623",
-			borderRadius: "50%",
-			animation: "kw-spin 0.75s linear infinite",
-			}} />
-	</>
-);
+const StateScreen = ({ icon, badge, badgeColor, title, desc, action }) => (
+	<div className="min-h-svh bg-gray-50 flex flex-col items-center justify-center px-6">
+		<div className="flex flex-col items-center gap-5 text-center max-w-sm w-full">
 
-const Icon = ({ children, bg, color }) => (
-	<div style={{
-		width: 52, height: 52, borderRadius: 14,
-		background: bg, color,
-		display: "flex", alignItems: "center", justifyContent: "center",
-		fontSize: 24,
-	}}>
-		{children}
-	</div>
-);
+		{/* Logo */}
+		<img src={KowopeDashboardLogo} alt="Kowopé" className="h-10 w-auto mb-2" />
 
-const Badge = ({ label, bg, color }) => (
-	<span style={{
-		fontSize: 11, fontWeight: 500,
-		padding: "3px 10px", borderRadius: 20,
-		background: bg, color,
-		letterSpacing: "0.04em",
-	}}>
-		{label}
-	</span>
-);
+		{/* Icon */}
+		<div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl ${icon.bg}`}>
+			{icon.symbol}
+		</div>
 
-const RetryButton = ({ onClick }) => (
-	<button onClick={onClick} style={{
-		marginTop: 4, padding: "9px 22px",
-		borderRadius: 8, border: "none",
-		background: "#F5A623", color: "#1a1a2e",
-		fontSize: 13, fontWeight: 600,
-		cursor: "pointer", letterSpacing: "0.02em",
-	}}>
-		Retry
-	</button>
-);
+		{/* Badge */}
+		<span className={`text-xs font-medium px-3 py-1 rounded-full ${badgeColor}`}>
+			{badge}
+		</span>
 
-const StateScreen = ({ children }) => (
-	<div style={{
-		minHeight: "100svh",
-		display: "flex", alignItems: "center", justifyContent: "center",
-		background: "#f9fafb",
-	}}>
-		<div style={{
-			display: "flex", flexDirection: "column",
-			alignItems: "center", gap: 14,
-			textAlign: "center", maxWidth: 300,
-			padding: "0 1.5rem",
-			}}>
-		{children}
+		{/* Copy */}
+		<div className="flex flex-col gap-2">
+			<p className="text-base font-semibold text-gray-900">{title}</p>
+			<p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+		</div>
+
+		{/* Action */}
+		{action}
 		</div>
 	</div>
 );
 
-const Title = ({ children }) => (
- 	<p style={{ fontSize: 15, fontWeight: 600, color: "#1a1a2e", margin: 0 }}>{children}</p>
-);
-
-const Desc = ({ children }) => (
-  	<p style={{ fontSize: 13, color: "#6b7280", margin: 0, lineHeight: 1.55 }}>{children}</p>
+const RetryButton = ({ onClick }) => (
+	<button
+		onClick={onClick}
+		className="mt-1 px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-hover active:scale-95 transition-all text-sm font-semibold text-gray-900 cursor-pointer"
+	>
+		Retry
+	</button>
 );
 
 export default function ProtectedRoute({ children }) {
-	const { authStatus, setAuthStatus } = useAuth();
+  	const { authStatus, setAuthStatus } = useAuth();
 
-	if (authStatus === "booting") return (
-		<DriverDashboardSkeleton />
-	);
+	if (authStatus === "booting") {
+		return (
+			<DriverDashboardSkeleton />
+		);
+	}
 
 	if (authStatus === "offline") return (
-		<StateScreen>
-			<img src={KowopeDashboardLogo} alt="Kowopé" style={{ width: 100, height: 100 }} />
-			<Icon bg="#fff7e6" color="#b45309">⚡</Icon>
-			<Badge label="No connection" bg="#fff7e6" color="#92400e" />
-			<Title>You're offline</Title>
-			<Desc>Check your internet connection and tap retry to continue.</Desc>
-			<RetryButton onClick={() => navigator.onLine && setAuthStatus("booting")} />
-		</StateScreen>
+		<StateScreen
+			icon={{ symbol: "⚡", bg: "bg-amber-50 text-amber-700" }}
+			badge="No connection"
+			badgeColor="bg-amber-50 text-amber-700"
+			title="You're offline"
+			desc="Check your internet connection and tap retry to continue."
+			action={<RetryButton onClick={() => navigator.onLine && setAuthStatus("booting")} />}
+		/>
 	);
 
 	if (authStatus === "server-error") return (
-		<StateScreen>
-			<img src={KowopeDashboardLogo} alt="Kowopé" style={{ width: 100, height: 100 }} />
-			<Icon bg="#fef2f2" color="#b91c1c">⚠</Icon>
-			<Badge label="Server unavailable" bg="#fef2f2" color="#991b1b" />
-			<Title>Something went wrong</Title>
-			<Desc>We're having trouble reaching Kowopé. Please try again shortly.</Desc>
-			<RetryButton onClick={() => setAuthStatus("booting")} />
-		</StateScreen>
+		<StateScreen
+			icon={{ symbol: "⚠", bg: "bg-red-50 text-red-700" }}
+			badge="Server unavailable"
+			badgeColor="bg-red-50 text-red-700"
+			title="Something went wrong"
+			desc="We're having trouble reaching Kowopé. Please try again shortly."
+			action={<RetryButton onClick={() => setAuthStatus("booting")} />}
+		/>
 	);
 
 	if (authStatus === "unauthenticated") return <Navigate to="/login" replace />;
