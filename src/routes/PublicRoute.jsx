@@ -2,7 +2,7 @@ import {
 	Navigate,
 	Outlet,
 } from "react-router-dom";
-
+import DriverDashboardSkeleton from "../components/Driver/DriverDashboardSkeleton.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function PublicRoute() {
@@ -12,9 +12,7 @@ export default function PublicRoute() {
 	// app still restoring session
 	if (authStatus === "booting") {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
-				Loading...
-			</div>
+			<DriverDashboardSkeleton />
 		);
 	}
 

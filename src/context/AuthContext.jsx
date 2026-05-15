@@ -9,16 +9,16 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const bootstrapAuth = async () => {
-        try {
-            const restored = await restoreSession();
-            if (!restored) { setAuthStatus("unauthenticated"); return; }
+            try {
+                const restored = await restoreSession();
+                if (!restored) { setAuthStatus("unauthenticated"); return; }
 
-            const profile = await fetchDriverProfile();
-            setUser(profile);
-            setAuthStatus("authenticated");
-        } catch (err) {
-            setAuthStatus(!navigator.onLine ? "offline" : "server-error");
-        }
+                const profile = await fetchDriverProfile();
+                setUser(profile);
+                setAuthStatus("authenticated");
+            } catch (err) {
+                setAuthStatus(!navigator.onLine ? "offline" : "server-error");
+            }
         };
         bootstrapAuth();
     }, []);
