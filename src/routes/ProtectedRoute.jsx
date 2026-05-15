@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import DriverDashboardSkeleton from "../components/Driver/DriverDashboardSkeleton.jsx";
 import KowopeDashboardLogo from '../assets/kowopeDashboardLogo-removebg-preview.png';
 
 const Spinner = () => (
@@ -75,40 +76,35 @@ const Desc = ({ children }) => (
 );
 
 export default function ProtectedRoute({ children }) {
-  const { authStatus, setAuthStatus } = useAuth();
+	const { authStatus, setAuthStatus } = useAuth();
 
-  if (authStatus === "booting") return (
-    <StateScreen>
-		<img src={KowopeDashboardLogo} alt="Kowopé" style={{ width: 100, height: 100 }} />
-		<Spinner />
-		<Title>Restoring your session</Title>
-		<Desc>Hang tight — we're getting you back in.</Desc>
-    </StateScreen>
-  );
+	if (authStatus === "booting") return (
+		<DriverDashboardSkeleton />
+	);
 
-  if (authStatus === "offline") return (
-    <StateScreen>
-		<img src={KowopeDashboardLogo} alt="Kowopé" style={{ width: 100, height: 100 }} />
-		<Icon bg="#fff7e6" color="#b45309">⚡</Icon>
-		<Badge label="No connection" bg="#fff7e6" color="#92400e" />
-		<Title>You're offline</Title>
-		<Desc>Check your internet connection and tap retry to continue.</Desc>
-		<RetryButton onClick={() => navigator.onLine && setAuthStatus("booting")} />
-    </StateScreen>
-  );
+	if (authStatus === "offline") return (
+		<StateScreen>
+			<img src={KowopeDashboardLogo} alt="Kowopé" style={{ width: 100, height: 100 }} />
+			<Icon bg="#fff7e6" color="#b45309">⚡</Icon>
+			<Badge label="No connection" bg="#fff7e6" color="#92400e" />
+			<Title>You're offline</Title>
+			<Desc>Check your internet connection and tap retry to continue.</Desc>
+			<RetryButton onClick={() => navigator.onLine && setAuthStatus("booting")} />
+		</StateScreen>
+	);
 
-  if (authStatus === "server-error") return (
-    <StateScreen>
-		<img src={KowopeDashboardLogo} alt="Kowopé" style={{ width: 100, height: 100 }} />
-		<Icon bg="#fef2f2" color="#b91c1c">⚠</Icon>
-		<Badge label="Server unavailable" bg="#fef2f2" color="#991b1b" />
-		<Title>Something went wrong</Title>
-		<Desc>We're having trouble reaching Kowopé. Please try again shortly.</Desc>
-		<RetryButton onClick={() => setAuthStatus("booting")} />
-    </StateScreen>
-  );
+	if (authStatus === "server-error") return (
+		<StateScreen>
+			<img src={KowopeDashboardLogo} alt="Kowopé" style={{ width: 100, height: 100 }} />
+			<Icon bg="#fef2f2" color="#b91c1c">⚠</Icon>
+			<Badge label="Server unavailable" bg="#fef2f2" color="#991b1b" />
+			<Title>Something went wrong</Title>
+			<Desc>We're having trouble reaching Kowopé. Please try again shortly.</Desc>
+			<RetryButton onClick={() => setAuthStatus("booting")} />
+		</StateScreen>
+	);
 
-  if (authStatus === "unauthenticated") return <Navigate to="/login" replace />;
+	if (authStatus === "unauthenticated") return <Navigate to="/login" replace />;
 
-  return children;
+	return children;
 }
