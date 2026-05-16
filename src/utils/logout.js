@@ -1,7 +1,10 @@
 import { clearAccessToken } from "../services/tokenStore";
+import { useAuth } from "../context/AuthContext";
 
-export const logout = async () => {
-
+export const logout = async (reason="logged-out") => {
+	const { setUser, setAuthStatus } = useAuth();
+	setUser(null);
+	setAuthStatus("unauthenticated");
 	clearAccessToken();
 
 	try {
@@ -15,6 +18,6 @@ export const logout = async () => {
 	} catch {}
 
 	window.location.replace(
-		"/login?reason=session-expired"
+		`/login?reason=${reason}`
 	);
 };

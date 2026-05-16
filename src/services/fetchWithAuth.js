@@ -86,14 +86,14 @@ export const fetchWithAuth = async (
 			// refresh failed logically
 			if (res.status === 401) {
 				clearAccessToken();
-				logout();
+				logout("session-expired");
 				throw new Error("AUTH_EXPIRED");
 			}
 
 		} catch (err) {
 			if (err.code === "SESSION_EXPIRED") {
 				clearAccessToken();
-				logout();
+				logout("session-expired");
 			}
 
 			throw err;

@@ -112,18 +112,17 @@ export default function Login() {
 
     useEffect(() => {
         if (reason === "session-expired") {
-            toast.error(
-                "Your session expired. Please log in again."
-            );
-
-            // optional:
-            // remove query param after toast
-            window.history.replaceState(
-                {},
-                "",
-                "/login"
-            );
+            toast.error("Your session expired. Please log in again.");
+        } else if (reason === "logged-out") {
+            toast.success("You have been logged out.");
         }
+
+        window.history.replaceState(
+            {},
+            "",
+            "/login"
+        );
+
     }, [reason]);
 
     return (
