@@ -1,16 +1,20 @@
 import { useContext, useState } from "react";
 import { LogOut, X } from "lucide-react";
 import { logout } from "../utils/logout";
+import { useAuth } from "../context/AuthContext.jsx";
 import { DarkModeContext } from "../context/DarkModeState";
 
 export default function LogoutModal({ isOpen, onClose }) {
 	const { darkMode: dk } = useContext(DarkModeContext);
 
 	const [isLoading, setIsLoading] = useState(false);
+    const { setUser, setAuthStatus } = useAuth();
 
 	const handleLogout = async () => {
 		try {
 			setIsLoading(true);
+            setUser(null);
+            setAuthStatus("unauthenticated");
 
 			await logout();
 

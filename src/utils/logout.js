@@ -1,10 +1,6 @@
 import { clearAccessToken } from "../services/tokenStore";
-import { useAuth } from "../context/AuthContext.jsx";
 
 export const logout = async (reason="logged-out") => {
-	const { setUser, setAuthStatus } = useAuth();
-	setUser(null);
-	setAuthStatus("unauthenticated");
 	clearAccessToken();
 
 	try {
