@@ -1,4 +1,4 @@
-import { logout } from "../utils/logout";
+import { triggerLogout } from "./authEvents";
 import {
 	getAccessToken,
 	setAccessToken,
@@ -86,14 +86,14 @@ export const fetchWithAuth = async (
 			// refresh failed logically
 			if (res.status === 401) {
 				clearAccessToken();
-				logout("session-expired");
+				triggerLogout("session-expired");
 				throw new Error("AUTH_EXPIRED");
 			}
 
 		} catch (err) {
 			if (err.code === "SESSION_EXPIRED") {
 				clearAccessToken();
-				logout("session-expired");
+				triggerLogout("session-expired");
 			}
 
 			throw err;
